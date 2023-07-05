@@ -722,7 +722,7 @@ bot.onText(/\/devs/, async (message) => {
   const chatId = message.chat.id;
   const userId = message.from.id;
 
-  if (!(await is_dev(user_id))) {
+  if (!(await is_dev(userId))) {
     bot.sendMessage(
       chatId,
       "Este comando só pode ser usado por desenvolvedores!"

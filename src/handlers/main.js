@@ -37,7 +37,6 @@ bot.on("message", async (msg) => {
       });
       if (existingUser) {
         if (!existingUser.receivedPlusOne) {
-          existingUser.diasdeestudo += 1;
           existingUser.receivedPlusOne = true;
           await existingUser.save();
           return;

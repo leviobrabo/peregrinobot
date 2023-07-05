@@ -14,7 +14,7 @@ Os comandos foram criados para organizar e facilitar o uso do bot
 
 • /ping - envia a latência do bot
 
-• /intersecoes - envia sua interseção
+• /intercessao - envia sua intercessão
 
 • /start - Mensagem inicial do bot
 

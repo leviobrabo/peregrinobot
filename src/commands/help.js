@@ -145,7 +145,8 @@ function helpCommand(bot, message) {
         '2. <code>/addmotivo</code> &lt;motivo&gt; - Adiciona um novo motivo de oração.\n' +
         '3. <code>/delmotivo</code> &lt;número&gt; - Remove um motivo de oração específico.\n' +
         '4. <code>/horariooracao</code> &lt;horário&gt; - Define o horário de oração (formato 24h). <code>Ex: 21:30</code>\n' +
-        '5. <code>/desativarhorario</code> - Desative o horário de oração\n\n' +
+        '5. <code>/desativarhorario</code> - Desative o horário de oração\n' +
+        '6. <code>/intercessao</code> - Envie um pedido de intercessão para o canal @pedidosdeoracaoperegrino\n\n' +
         'Certifique-se de ter no máximo <b>5 motivos</b> de oração cadastrados. Para mais informações digite /ajudaoracao';
       await bot.editMessageText(msgoracao, {
         parse_mode: "HTML",

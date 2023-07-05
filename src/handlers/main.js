@@ -1049,7 +1049,7 @@ bot.onText(/\/traducao/, async (msg) => {
 
 // Interseções
 
-bot.onText(/\/intersecoes/, async (msg) => {
+bot.onText(/\/intercessao/, async (msg) => {
   const chatId = msg.chat.id;
   const userId = msg.from.id;
 

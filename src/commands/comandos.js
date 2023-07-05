@@ -8,7 +8,7 @@ function comandosCommand(bot, message) {
     { command: '/infotradu', description: 'Informações sobre as traduções disponíveis' },
     { command: '/stats', description: 'Envia as estatísticas do bot (N° de usuários e grupos)' },
     { command: '/ping', description: 'Envia a latência do bot' },
-    { command: '/intersecoes', description: 'Envia sua interseção' },
+    { command: '/intercessao', description: 'Envia sua intercessão' },
     { command: '/start', description: 'Mensagem inicial do bot' },
     { command: '/help', description: 'Ajuda do bot' },
     { command: '/fwdon', description: 'Não receber encaminhamento no grupo' },

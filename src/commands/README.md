@@ -86,9 +86,9 @@ Os comandos foram criados para organizar e facilitar o uso do bot
 
 • /verstema - tema de versículos para o grupos
 
-• topdias - ranking de dias ativos
+• /topdias - ranking de dias ativos
 
-• topplanos - ranking de planos concluídos
+• /topplanos - ranking de planos concluídos
 
 ### COMANDOS PARA DEVS
 

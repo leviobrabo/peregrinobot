@@ -2203,8 +2203,8 @@ async function sendCongratulatoryMessage() {
         { parse_mode: 'HTML' }
       );
 
-      user.receivedPlusOne = false;
       user.diasdeestudo += 1;
+      user.receivedPlusOne = false;
       await user.save();
     }
   } catch (error) {

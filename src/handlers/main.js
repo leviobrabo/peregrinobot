@@ -1363,7 +1363,7 @@ async function handlePlanBiblicoCompletion(userId) {
 }
 
 const userJob = new CronJob(
-  "00 00 22 * * *",
+  "00 00 18 * * *",
   async function () {
     try {
       const users = await UserModel.find({ blb365: true });
@@ -2862,7 +2862,7 @@ async function getAdoracao(chatId) {
 }
 
 const adoracao = new CronJob(
-  "00 10 11 * * *",
+  "00 00 07 * * *",
   async function () {
     try {
       const chatModels = await ChatModel.find({ verstema: "Adoração" });
@@ -2926,7 +2926,7 @@ async function getAmor(chatId) {
 }
 
 const amor = new CronJob(
-  "00 10 11 * * *",
+  "00 00 07 * * *",
   async function () {
     try {
       const chatModels = await ChatModel.find({ verstema: "Amor" });
@@ -2989,7 +2989,7 @@ async function getConsolo(chatId) {
 }
 
 const consolo = new CronJob(
-  "00 10 11 * * *",
+  "00 00 07 * * *",
   async function () {
     try {
       const chatModels = await ChatModel.find({ verstema: "Consolo" });
@@ -3051,7 +3051,7 @@ async function getEncorajamento(chatId) {
 }
 
 const encorajamento = new CronJob(
-  "00 10 11 * * *",
+  "00 00 07 * * *",
   async function () {
     try {
       const chatModels = await ChatModel.find({ verstema: "Encorajamento" });
@@ -3114,7 +3114,7 @@ async function getFe(chatId) {
 }
 
 const fe = new CronJob(
-  "00 10 11 * * *",
+  "00 00 07 * * *",
   async function () {
     try {
       const chatModels = await ChatModel.find({ verstema: "Fé" });
@@ -4515,7 +4515,7 @@ async function handlePlanCompletionLa(plano) {
   await plano.save();
 }
 
-const LaJob = new CronJob("00 12 21 * * *", async () => {
+const LaJob = new CronJob("00 30 21 * * *", async () => {
   try {
     const activePlanos = await PlanoModel.find({ plano7: true });
     for (const plano of activePlanos) {
@@ -4713,7 +4713,7 @@ async function handlePlanCompletionNc(plano) {
   await plano.save();
 }
 
-const NcJob = new CronJob("00 12 21 * * *", async () => {
+const NcJob = new CronJob("00 30 21 * * *", async () => {
   try {
     const activePlanos = await PlanoModel.find({ plano8: true });
     for (const plano of activePlanos) {
@@ -4866,7 +4866,7 @@ async function handlePlanCompletionAp(plano) {
   await plano.save();
 }
 
-const apJob = new CronJob("00 10 13 * * *", async () => {
+const apJob = new CronJob("00 30 21 * * *", async () => {
   try {
     const activePlanos = await PlanoModel.find({ plano9: true });
     for (const plano of activePlanos) {
@@ -5063,7 +5063,7 @@ async function handlePlanCompletionPb(plano) {
   await plano.save();
 }
 
-const NpbJob = new CronJob("00 12 21 * * *", async () => {
+const NpbJob = new CronJob("00 30 21 * * *", async () => {
   try {
     const activePlanos = await PlanoModel.find({ plano10: true });
     for (const plano of activePlanos) {
@@ -5261,7 +5261,7 @@ async function handlePlanCompletionCasamento(plano) {
   await plano.save();
 }
 
-const CasamentoJob = new CronJob("00 12 21 * * *", async () => {
+const CasamentoJob = new CronJob("00 30 21 * * *", async () => {
   try {
     const activePlanos = await PlanoModel.find({ plano11: true });
     for (const plano of activePlanos) {

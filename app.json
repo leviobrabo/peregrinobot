@@ -1,0 +1,51 @@
+{
+  "name": "Peregrino",
+  "description": "'Peregrino' é um Bot bíblico",
+  "repository": "https://github.com/leviobrabo/peregrino",
+  "logo": "https://i.imgur.com/i8Xc5WZ.jpeg",
+  "keywords": [
+    "node",
+    "biblia",
+    "telegrambot",
+    "planos_biblicos"
+  ],
+  "website": "https://github.com/leviobrabo/peregrino",
+  "success_url": "https://t.me/operegrino_bot",
+  "env": {
+    "TELEGRAM_API": {
+      "description": "Make a bot at BotFather http://telegram.dog/BotFather and get the token of your bot",
+      "value": "",
+      "required": true
+    },
+    "DB_STRING": {
+      "description": "Create database ate MongoDB Atlas https://www.mongodb.com/ create new cluster and get url for connection.",
+      "value": "",
+      "required": true
+    },
+    "groupId": {
+      "description": "Group ID LOG Telegram.",
+      "value": "",
+      "required": true
+    },
+    "channelId": {
+      "description": "Channel ID post Telegram.",
+      "value": "",
+      "required": true
+    },
+    "nameBot": {
+      "description": "Bot Name.",
+      "value": "",
+      "required": true
+    },
+    "ownerId": {
+      "description": "Owner ID Telegram.",
+      "value": "",
+      "required": true
+    },
+    "channelIdIt": {
+      "description": "Telegram intercession channel ID.",
+      "value": "",
+      "required": true
+    }
+  }
+}

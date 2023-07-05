@@ -38,12 +38,11 @@ bot.on("message", async (msg) => {
       if (existingUser) {
         if (!existingUser.receivedPlusOne) {
           existingUser.diasdeestudo += 1;
-          console.log(`ganhou mais um dia`);
           existingUser.receivedPlusOne = true;
           await existingUser.save();
           return;
         } else {
-          console.log('Usuário já recebeu o plus one');
+          // console.log('Usuário já recebeu o plus one');
         }
       } else {
         const user = new UserModel({
@@ -1406,8 +1405,8 @@ bot.on("callback_query", async (query) => {
   const user = await UserModel.findOne({ user_id: userId });
   const chat = await ChatModel.findOne({ chatId: chatId });
 
-  console.log(query.data);
-  console.log(query.data.startsWith('next'));
+  // console.log(query.data);
+  // console.log(query.data.startsWith('next'));
 
   if (query.data.startsWith('prev') || query.data.startsWith('next')) {
     let comando = query.data.split("-");
@@ -2417,10 +2416,10 @@ bot.on('inline_query', async (query) => {
       const startVerseQuery = parseInt(versiculo) | 0;
       const endVerseQuery = parseInt(versiculo_fim) | 0;
 
-      console.log('Book Query:', bookQuery);
-      console.log('Chapter Query:', chapterQuery);
-      console.log('Start Verse Query:', startVerseQuery);
-      console.log('End Verse Query:', endVerseQuery);
+      // console.log('Book Query:', bookQuery);
+      //   console.log('Chapter Query:', chapterQuery);
+      // console.log('Start Verse Query:', startVerseQuery);
+      // console.log('End Verse Query:', endVerseQuery);
 
       const filteredBooks = jsonBible.filter((book) => {
         return (
@@ -2431,13 +2430,13 @@ bot.on('inline_query', async (query) => {
         );
       });
 
-      console.log('Filtered Books:', filteredBooks);
+      // console.log('Filtered Books:', filteredBooks);
 
       if (filteredBooks.length > 0) {
         const book = filteredBooks[0];
         const chapterIndex = chapterQuery - 1;
 
-        console.log('Chapter Index:', chapterIndex);
+        // console.log('Chapter Index:', chapterIndex);
 
         if (chapterIndex >= 0 && chapterIndex < book.chapters.length) {
           const chapter = book.chapters[chapterIndex];
@@ -2453,8 +2452,8 @@ bot.on('inline_query', async (query) => {
             const chapterText = chapterTextArray.join('\n');
             const caption = `${book.name} ${chapterQuery} (${user.translation.toUpperCase()})`;
             const text = `<b>${book.name} ${chapterQuery} (${user.translation.toUpperCase()})</b>`;
-            console.log(searchQuery);
-            console.log('Chapter Text:', chapterText);
+            // console.log(searchQuery);
+            // console.log('Chapter Text:', chapterText);
 
             const result = {
               type: 'article',
@@ -2470,14 +2469,14 @@ bot.on('inline_query', async (query) => {
               thumb_url: BibleUrl,
             };
 
-            console.log('Result:', result);
+            // console.log('Result:', result);
 
             await bot.answerInlineQuery(query.id, [result]);
             return;
           } else if (startVerseQuery > 0 && startVerseQuery <= chapter.length && endVerseQuery === 0) {
             const verseIndex = startVerseQuery - 1;
 
-            console.log('Verse Index:', verseIndex);
+            // console.log('Verse Index:', verseIndex);
 
             if (verseIndex >= 0 && verseIndex < chapter.length) {
               // Enviar um versículo específico
@@ -2486,8 +2485,8 @@ bot.on('inline_query', async (query) => {
 
               const caption = `${book.name} ${chapterQuery}:${startVerseQuery} (${user.translation.toUpperCase()})`;
               const text = `<b>${book.name} ${chapterQuery}:${startVerseQuery} (${user.translation.toUpperCase()})</b>`;
-              console.log(searchQuery);
-              console.log('Verse Text:', verseText);
+              //  console.log(searchQuery);
+              // console.log('Verse Text:', verseText);
 
               const result = {
                 type: 'article',
@@ -2501,7 +2500,7 @@ bot.on('inline_query', async (query) => {
                 thumb_url: BibleUrl,
               };
 
-              console.log('Result:', result);
+              // console.log('Result:', result);
 
               await bot.answerInlineQuery(query.id, [result]);
               return;
@@ -2511,8 +2510,8 @@ bot.on('inline_query', async (query) => {
             const startVerseIndex = startVerseQuery - 1;
             const endVerseIndex = endVerseQuery - 1;
 
-            console.log('Start Verse Index:', startVerseIndex);
-            console.log('End Verse Index:', endVerseIndex);
+            // console.log('Start Verse Index:', startVerseIndex);
+            // console.log('End Verse Index:', endVerseIndex);
 
             if (
               startVerseIndex >= 0 &&

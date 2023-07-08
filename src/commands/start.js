@@ -59,19 +59,23 @@ function startCommand(bot, message) {
         },
       ];
 
-      await bot.editMessageText(newCaption, {
-        parse_mode: "HTML",
-        chat_id: chatId,
-        message_id: messageId,
-        reply_markup: {
-          inline_keyboard: [backToStartButton],
-        },
-      });
+      const currentMessage = callbackQuery.message.text;
+      if (currentMessage !== newCaption) {
+        await bot.editMessageText(newCaption, {
+          parse_mode: "HTML",
+          chat_id: chatId,
+          message_id: messageId,
+          reply_markup: {
+            inline_keyboard: [backToStartButton],
+          },
+        });
+      }
     } else if (callbackQuery.data === "back_to_start") {
       await bot.editMessageText(msgstart, {
         parse_mode: "HTML",
         chat_id: chatId,
         message_id: messageId,
+        disable_web_page_preview: true,
         reply_markup: options_start.reply_markup,
       });
     }

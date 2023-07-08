@@ -6,7 +6,7 @@ function startCommand(bot, message) {
   const PhotoStart = 'src/image/start.png';
   const owner = process.env.ownerId
 
-  const caption = `Olá, <b>${firstName}</b>! \n\nEu sou o bot <b>Peregrino</b>, sou um bot bíblico que está aqui para propagar o evangelho de Deus, e ajudá-los nos estudos diários da bíblia.\n\nAdicione-me em seu grupo para receber as mensagens bíblicas.\n\n<b>Funções:</b> /help <b>[COMECE POR AQUI]</b>\n\n📦<b>Meu código-fonte:</b> <a href="https://github.com/leviobrabo/fatoshistoricos">GitHub</a>`;
+  const msgstart = `Olá, <b>${firstName}</b>! \n\nEu sou o bot <b>Peregrino</b>, sou um bot bíblico que está aqui para propagar o evangelho de Deus, e ajudá-los nos estudos diários da bíblia.\n\nAdicione-me em seu grupo para receber as mensagens bíblicas.\n\n<b>Funções:</b> /help <b>[COMECE POR AQUI]</b>\n\n📦<b>Meu código-fonte:</b> <a href="https://github.com/leviobrabo/fatoshistoricos">GitHub</a>`;
   const options_start = {
     parse_mode: "HTML",
     disable_web_page_preview: true,
@@ -77,7 +77,7 @@ function startCommand(bot, message) {
     }
   });
 
-  bot.sendPhoto(message.chat.id, PhotoStart, { caption: caption, ...options_start });
+  bot.sendMessage(message.chat.id, msgstart, options_start);
 }
 
 module.exports = {

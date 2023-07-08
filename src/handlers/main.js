@@ -2352,6 +2352,8 @@ bot.onText(/\/status/, async (msg) => {
   }
 });
 
+// Pesquisa do bíblia via comando
+
 
 // consulta da bíblia inline
 

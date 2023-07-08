@@ -68,7 +68,7 @@ function startCommand(bot, message) {
         },
       });
     } else if (callbackQuery.data === "back_to_start") {
-      await bot.editMessageText(caption, {
+      await bot.editMessageText(msgstart, {
         parse_mode: "HTML",
         chat_id: chatId,
         message_id: messageId,

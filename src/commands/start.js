@@ -59,7 +59,7 @@ function startCommand(bot, message) {
         },
       ];
 
-      await bot.editMessageCaption(newCaption, {
+      await bot.editMessageText(newCaption, {
         parse_mode: "HTML",
         chat_id: chatId,
         message_id: messageId,
@@ -68,7 +68,7 @@ function startCommand(bot, message) {
         },
       });
     } else if (callbackQuery.data === "back_to_start") {
-      await bot.editMessageCaption(caption, {
+      await bot.editMessageText(caption, {
         parse_mode: "HTML",
         chat_id: chatId,
         message_id: messageId,

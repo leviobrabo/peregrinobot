@@ -168,24 +168,21 @@ bot.on("new_chat_members", async (msg) => {
     }
 
     try {
-      const developerMembers = await Promise.all(msg.new_chat_members.map(async (member) => {
-        if (member.is_bot === false && await is_dev(member.id)) {
+      const developerMembers = [];
+      for (const member of msg.new_chat_members) {
+        if (!member.is_bot && (await is_dev(member.id))) {
           const user = await UserModel.findOne({ user_id: member.id });
-          if (user && user.is_dev === true) {
-            return member;
+          if (user && user.is_dev) {
+            developerMembers.push(member);
           }
         }
-      }));
+      }
 
       if (developerMembers.length > 0) {
         const message = `👨‍💻 <b>Um dos meus desenvolvedores entrou no grupo:</b> <a href="tg://user?id=${developerMembers[0].id}">${developerMembers[0].first_name}</a> 😎👍`;
-        bot.sendMessage(chatId, message, { parse_mode: "HTML" }).catch(
-          (error) => {
-            console.error(
-              `Erro ao enviar mensagem para o grupo ${chatId}: ${error}`
-            );
-          }
-        );
+        bot.sendMessage(chatId, message, { parse_mode: "HTML" }).catch((error) => {
+          console.error(`Erro ao enviar mensagem para o grupo ${chatId}: ${error}`);
+        });
       }
     } catch (err) {
       console.error(err);
@@ -2229,14 +2226,6 @@ async function sendLoserMessage() {
     const users = await UserModel.find({ receivedPlusOne: false });
 
     for (const user of users) {
-      const message = `<b>Onde você está?</b>\n\n<i>Estamos sentindo sua falta nos estudos diários</i>`;
-
-      bot.sendMessage(
-        user.user_id,
-        message,
-        { parse_mode: 'HTML' }
-      );
-
       user.diasdeestudo = 0;
       await user.save();
     }

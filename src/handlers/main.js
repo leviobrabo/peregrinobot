@@ -506,10 +506,7 @@ bot.onText(/\/ban/, async (message) => {
   const chatId = message.text.split(" ")[1];
 
   if (message.chat.type !== "private") {
-    await bot.sendMessage(
-      message.chat.id,
-      "Por favor, envie este comando em um chat privado com o bot."
-    );
+    console.log("mensagem de ban só no privado do bot")
     return;
   }
 

@@ -2388,7 +2388,7 @@ bot.on('inline_query', async (query) => {
       const result_init = {
         type: 'article',
         id: query.id,
-        title: 'Digite o nome texto bíblico e sua referência',
+        title: 'Digite o nome do texto bíblico e sua referência',
         description: 'Por exemplo: Gênesis 1:3 ou gn 1:3',
         input_message_content: {
           message_text: `<b>O Pelegrino possui uma bíblia inline</b>\n\nVocê pode tá se perguntando o que seria isso... basicamente é uma consulta por uma linha de comando, isto é, você pode consultar a bíblia em qualquer lugar do telegram (Grupos, Canais e chat privado).\n\nBasta enviar <code>@operegrino_bot Gênesis 1</code>\n<code>@operegrino_bot gn 1</code>\n<code>@operegrino_bot ap 1:2</code>\n<code>@operegrino_bot ex 1:5-8</code>.\n\nPara acessar a lista dos nome dos livros ou abreviações digite: /livros !`,

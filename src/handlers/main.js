@@ -326,9 +326,6 @@ bot.onText(/\/stats/, async (msg) => {
   const message = `\n──❑ 「 Bot Stats 」 ❑──\n\n ☆ ${numUsers} usuários\n ☆ ${numChats} chats`;
   bot.sendMessage(chatId, message);
 });
-bot.on("polling_error", (error) => {
-  console.error(`Erro no bot de polling: ${error}`);
-});
 
 function timeFormatter(seconds) {
   const hours = Math.floor(seconds / 3600);
@@ -2357,6 +2354,27 @@ bot.on('inline_query', async (query) => {
     const userId = query.from.id;
     let user = await UserModel.findOne({ user_id: userId });
 
+    if (!query.query) {
+      const result_init = {
+        type: 'article',
+        id: query.id,
+        title: 'Digite o nome texto bíblico e sua referência',
+        description: 'Por exemplo: Gênesis 1:3 ou gn 1:3',
+        input_message_content: {
+          message_text: `<b>O Pelegrino possui uma bíblia inline</b>\n\nVocê pode tá se perguntando o que seria isso... basicamente é uma consulta por uma linha de comando, isto é, você pode consultar a bíblia em qualquer lugar do telegram (Grupos, Canais e chat privado).\n\nBasta enviar <code>@operegrino_bot Gênesis 1</code>\n<code>@operegrino_bot gn 1</code>\n<code>@operegrino_bot ap 1:2</code>\n<code>@operegrino_bot ex 1:5-8</code>.\n\nPara acessar a lista dos nome dos livros ou abreviações digite: /livros !`,
+          parse_mode: 'HTML',
+        },
+        thumbnail_url: 'https://i.imgur.com/QKb7BfU.jpeg',
+      }
+      await bot.answerInlineQuery(query.id, [result_init], {
+        switch_pm_text: 'Como usar o bot',
+        switch_pm_parameter: "how_to_use",
+        cache_time: 0,
+      });
+
+      return;
+    }
+
     if (!user) {
       user = new UserModel({
         user_id: userId,
@@ -2462,7 +2480,7 @@ bot.on('inline_query', async (query) => {
                 parse_mode: 'HTML',
               },
               description: chapterText.slice(0, 100),
-              thumb_url: BibleUrl,
+              thumbnail_url: BibleUrl,
             };
 
             // console.log('Result:', result);
@@ -2493,7 +2511,7 @@ bot.on('inline_query', async (query) => {
                 )}</b><i>${verseText}</i>`,
                 description: verseText.slice(0, 100),
                 parse_mode: 'HTML',
-                thumb_url: BibleUrl,
+                thumbnail_url: BibleUrl,
               };
 
               // console.log('Result:', result);
@@ -2538,7 +2556,7 @@ bot.on('inline_query', async (query) => {
                   parse_mode: 'HTML',
                 },
                 description: verseText.slice(0, 100),
-                thumb_url: BibleUrl,
+                thumbnail_url: BibleUrl,
               };
 
               await bot.answerInlineQuery(query.id, [result]);
@@ -2562,7 +2580,7 @@ bot.on('inline_query', async (query) => {
         input_message_content: {
           message_text: errorMessage,
         },
-        thumb_url:
+        thumbnail_url:
           'https://e7.pngegg.com/pngimages/804/92/png-clipart-computer-icons-error-exit-miscellaneous-trademark.png',
       },
     ];
@@ -5489,3 +5507,7 @@ const DivorcioJob = new CronJob("00 30 21 * * *", async () => {
 }, null, true, "America/Sao_Paulo");
 
 DivorcioJob.start();
+
+bot.on("polling_error", (error) => {
+  console.error(`Erro no bot de polling: ${error}`);
+});

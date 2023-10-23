@@ -39,12 +39,7 @@ const commands = [
   { command: 'status', description: 'Ver os status no bot' },
 ];
 
-const options = {
-  commands,
-  scope: { type: 'all_private_chats' }
-};
-
-bot.setMyCommands(options).then(() => {
+bot.setMyCommands(commands).then(() => {
   console.log('Bot commands have been set for all private chats.');
 });
 

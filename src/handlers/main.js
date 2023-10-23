@@ -40,11 +40,10 @@ const commands = [
 ];
 
 async function updateCommands() {
-  const myCommands = await bot.telegram.callApi('getMyCommands', {
-    scope: JSON.stringify({
-      type: 'all_private_chats'
-    })
-  });
+  const botInfo = await bot.telegram.getMe();
+  const botUsername = botInfo.username;
+
+  const myCommands = await bot.telegram.getMyCommands();
 
   let needUpdate = false;
 
@@ -61,11 +60,9 @@ async function updateCommands() {
   }
 
   if (needUpdate) {
-    await bot.telegram.callApi('setMyCommands', {
+    await bot.telegram.setMyCommands({
       commands,
-      scope: JSON.stringify({
-        type: 'all_private_chats'
-      })
+      scope: { type: 'all_private_chats' }
     });
   }
 }

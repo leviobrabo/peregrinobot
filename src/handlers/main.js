@@ -39,16 +39,33 @@ const commands = [
   { command: 'status', description: 'Ver os status no bot' },
 ];
 
-try {
-  const response = bot.telegram.setMyCommands(commands, {
-    scope: 'all_private_chats',
-  });
-  console.log('setMyCommands', response);
-} catch (error) {
-  console.error('setMyCommands', error.description);
+const myCommands = await bot.telegram.callApi('getMyCommands', {
+  scope: JSON.stringify({
+    type: 'all_private_chats'
+  })
+})
+
+let needUpdate = false
+if (myCommands.length !== commands.length) {
+  needUpdate = true
+} else {
+  for (let i = 0; i < commands.length; i++) {
+    const myCommand = myCommands.find(c => c.command === commands[i].command)
+    if (!myCommand || myCommand.description !== commands[i].description) {
+      needUpdate = true
+      break
+    }
+  }
 }
 
-
+if (needUpdate) {
+  await bot.telegram.callApi('setMyCommands', {
+    commands,
+    scope: JSON.stringify({
+      type: 'all_private_chats'
+    })
+  })
+}
 
 
 

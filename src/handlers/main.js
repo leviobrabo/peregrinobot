@@ -38,7 +38,7 @@ bot.setMyCommands([
   { command: 'intercessao', description: 'Envie seu motivo de intercessão' },
   { command: 'status', description: 'Ver os status no bot' },
 ],
-  { scope: JSON.stringify({ type: 'all_private_chats' }) })
+{ scope: JSON.stringify({ type: 'all_private_chats' })} )
 
 bot.on("message", async (msg) => {
   try {

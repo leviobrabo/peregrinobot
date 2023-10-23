@@ -24,29 +24,35 @@ const { planoCommand } = require("../commands/planos");
 const { livrosCommand } = require("../commands/livros");
 const { comandosCommand } = require("../commands/comandos");
 
-const commands = [
-  { command: 'start', description: 'Início do bot' },
-  { command: 'help', description: 'Funcionalidades do bot' },
-  { command: 'traducao', description: 'Escolha sua tradução preferida' },
-  { command: 'comandos', description: 'Lista de comandos' },
-  { command: 'planobiblico', description: 'Plano bíblico 365 dias' },
-  { command: 'plano', description: 'Veja todos os planos disponíveis' },
-  { command: 'addmotivo', description: 'Adicione um motivo de oração' },
-  { command: 'addanotacao', description: 'Adicione uma anotação' },
-  { command: 'verson', description: 'Receber versículos bíblicos' },
-  { command: 'intercessao', description: 'Envie seu motivo de intercessão' },
-  { command: 'status', description: 'Ver os status no bot' },
-];
+async function setBotCommands() {
+  const commands = [
+    { command: 'start', description: 'Início do bot' },
+    { command: 'help', description: 'Funcionalidades do bot' },
+    { command: 'traducao', description: 'Escolha sua tradução preferida' },
+    { command: 'comandos', description: 'Lista de comandos' },
+    { command: 'planobiblico', description: 'Plano bíblico 365 dias' },
+    { command: 'plano', description: 'Veja todos os planos disponíveis' },
+    { command: 'addmotivo', description: 'Adicione um motivo de oração' },
+    { command: 'addanotacao', description: 'Adicione uma anotação' },
+    { command: 'verson', description: 'Receber versículos bíblicos' },
+    { command: 'intercessao', description: 'Envie seu motivo de intercessão' },
+    { command: 'status', description: 'Ver os status no bot' },
+  ];
 
-try {
-  const response = await bot.telegram.setMyCommands(commands, {
-    scope: 'all_private_chats',
-    language_code: 'pt',
-  });
-  console.log('setMyCommands', response);
-} catch (error) {
-  console.error('setMyCommands', error.description);
+  try {
+    const response = await bot.telegram.setMyCommands(commands, {
+      scope: 'all_private_chats',
+      language_code: 'pt',
+    });
+    console.log('setMyCommands', response);
+  } catch (error) {
+    console.error('setMyCommands', error.description);
+  }
 }
+
+// Chame a função para configurar os comandos
+setBotCommands();
+
 
 
 bot.on("message", async (msg) => {

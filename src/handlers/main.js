@@ -2,6 +2,7 @@ const { bot } = require("../bot");
 const { ChatModel, UserModel, PlanoModel } = require("../database");
 const CronJob = require("cron").CronJob;
 const fs = require('fs');
+const fetch = require('node-fetch');
 
 // REGISTRO
 const groupId = process.env.groupId;
@@ -24,24 +25,30 @@ const { planoCommand } = require("../commands/planos");
 const { livrosCommand } = require("../commands/livros");
 const { comandosCommand } = require("../commands/comandos");
 
+bot.request = async function (command, json) {
+  return fetch(`https://api.telegram.org/bot${process.env.TELEGRAM_API}/${command}`, {
+    method: 'post',
+    body: JSON.stringify(json),
+    headers: { 'Content-Type': 'application/json' }
+  });
+}
 
-const commands = [
-  { command: 'start', description: 'Início do bot' },
-  { command: 'help', description: 'Funcionalidades do bot' },
-  { command: 'traducao', description: 'Escolha sua tradução preferida' },
-  { command: 'comandos', description: 'Lista de comandos' },
-  { command: 'planobiblico', description: 'Plano bíblico 365 dias' },
-  { command: 'plano', description: 'Veja todos os planos disponíveis' },
-  { command: 'addmotivo', description: 'Adicione um motivo de oração' },
-  { command: 'addanotacao', description: 'Adicione uma anotação' },
-  { command: 'verson', description: 'Receber versículos bíblicos' },
-  { command: 'intercessao', description: 'Envie seu motivo de intercessão' },
-  { command: 'status', description: 'Ver os status no bot' },
-];
-
-bot.setMyCommands(commands).then(() => {
-  console.log('Bot commands have been set for all private chats.');
-});
+bot.request('setMyCommands', {
+  commands: [
+    { command: 'start', description: 'Início do bot' },
+    { command: 'help', description: 'Funcionalidades do bot' },
+    { command: 'traducao', description: 'Escolha sua tradução preferida' },
+    { command: 'comandos', description: 'Lista de comandos' },
+    { command: 'planobiblico', description: 'Plano bíblico 365 dias' },
+    { command: 'plano', description: 'Veja todos os planos disponíveis' },
+    { command: 'addmotivo', description: 'Adicione um motivo de oração' },
+    { command: 'addanotacao', description: 'Adicione uma anotação' },
+    { command: 'verson', description: 'Receber versículos bíblicos' },
+    { command: 'intercessao', description: 'Envie seu motivo de intercessão' },
+    { command: 'status', description: 'Ver os status no bot' },
+  ],
+  scope: { "type": "all_private_chats" }
+}).then(r => console.log(r));
 
 bot.on("message", async (msg) => {
   try {

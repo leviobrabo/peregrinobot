@@ -40,9 +40,6 @@ const commands = [
 ];
 
 async function updateCommands() {
-  const botInfo = await bot.telegram.getMe();
-  const botUsername = botInfo.username;
-
   const myCommands = await bot.telegram.getMyCommands();
 
   let needUpdate = false;

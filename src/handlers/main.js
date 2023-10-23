@@ -25,8 +25,7 @@ const { planoCommand } = require("../commands/planos");
 const { livrosCommand } = require("../commands/livros");
 const { comandosCommand } = require("../commands/comandos");
 
-bot.setMyCommands([
-  { command: 'start', description: 'Início do bot' },
+const chatCommands = [
   { command: 'help', description: 'Funcionalidades do bot' },
   { command: 'traducao', description: 'Escolha sua tradução preferida' },
   { command: 'comandos', description: 'Lista de comandos' },
@@ -34,11 +33,27 @@ bot.setMyCommands([
   { command: 'plano', description: 'Veja todos os planos disponíveis' },
   { command: 'addmotivo', description: 'Adicione um motivo de oração' },
   { command: 'addanotacao', description: 'Adicione uma anotação' },
+  { command: 'horariooracao', description: 'Adicionar um lembrete de orar' },
   { command: 'verson', description: 'Receber versículos bíblicos' },
   { command: 'intercessao', description: 'Envie seu motivo de intercessão' },
   { command: 'status', description: 'Ver os status no bot' },
-],
-{ scope: JSON.stringify({ type: 'all_private_chats' })} )
+];
+bot.setMyCommands(chatCommands, { scope: JSON.stringify({ type: 'all_private_chats' }) });
+
+const groupCommands = [
+  { command: 'status', description: 'Ver os status no bot' },
+];
+
+bot.setMyCommands(groupCommands, { scope: JSON.stringify({ type: 'all_group_chats' }) });
+
+const adminCommands = [
+  { command: 'fwdon', description: 'Receber encaminhamento no grupo' },
+  { command: 'fwdoff', description: 'Não receber encaminhamento no grupo' },
+  { command: '/verstema', description: 'Escolher entre Adoração, Amor, Consolo, Encorajamento, Fé' },
+];
+
+bot.setMyCommands(adminCommands, { scope: JSON.stringify({ type: 'all_chat_administrators' }) });
+
 
 bot.on("message", async (msg) => {
   try {

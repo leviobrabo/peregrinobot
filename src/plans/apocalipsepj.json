@@ -86,5 +86,25 @@
   "22": {
     "audio": "src/plans/audios/apocalipse/AP_22.m4a",
     "caption": "A Mulher Assentada Sobre a Besta (A Grande Meretriz) - Paulo Junior | Série de Apocalipse 22\n\nTexto base: Apocalipse 17:1-18"
+  },
+  "23": {
+    "audio": "src/plans/audios/apocalipse/AP_23.mp3",
+    "caption": "Série Apocalipse - “A queda da Babilônia” - Paulo Junior | Série de Apocalipse 23\n\nTexto base: Apocalipse 18"
+  },
+  "24": {
+    "audio": "src/plans/audios/apocalipse/AP_24.mp3",
+    "caption": "Série Apocalipse - O Casamento de Cristo - Paulo Junior | Série de Apocalipse 24\n\nTexto base: Apocalipse 19"
+  },
+  "25": {
+    "audio": "src/plans/audios/apocalipse/AP_25.mp3",
+    "caption": "A Segunda Vinda de Cristo - Paulo Junior | Série de Apocalipse 25\n\nTexto base: Apocalipse 19"
+  },
+  "26": {
+    "audio": "src/plans/audios/apocalipse/AP_26.mp3",
+    "caption": "O Milênio - Paulo Junior | Série de Apocalipse 26\n\nTexto base: Apocalipse 20"
+  },
+  "27": {
+    "audio": "src/plans/audios/apocalipse/AP_27.mp3",
+    "caption": "As Duas Ressurreições - Paulo Junior | Série de Apocalipse 27\n\nTexto base: Apocalipse 20"
   }
 }

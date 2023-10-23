@@ -39,33 +39,40 @@ const commands = [
   { command: 'status', description: 'Ver os status no bot' },
 ];
 
-const myCommands = await bot.telegram.callApi('getMyCommands', {
-  scope: JSON.stringify({
-    type: 'all_private_chats'
-  })
-})
-
-let needUpdate = false
-if (myCommands.length !== commands.length) {
-  needUpdate = true
-} else {
-  for (let i = 0; i < commands.length; i++) {
-    const myCommand = myCommands.find(c => c.command === commands[i].command)
-    if (!myCommand || myCommand.description !== commands[i].description) {
-      needUpdate = true
-      break
-    }
-  }
-}
-
-if (needUpdate) {
-  await bot.telegram.callApi('setMyCommands', {
-    commands,
+async function updateCommands() {
+  const myCommands = await bot.telegram.callApi('getMyCommands', {
     scope: JSON.stringify({
       type: 'all_private_chats'
     })
-  })
+  });
+
+  let needUpdate = false;
+
+  if (myCommands.length !== commands.length) {
+    needUpdate = true;
+  } else {
+    for (let i = 0; i < commands.length; i++) {
+      const myCommand = myCommands.find(c => c.command === commands[i].command);
+      if (!myCommand || myCommand.description !== commands[i].description) {
+        needUpdate = true;
+        break;
+      }
+    }
+  }
+
+  if (needUpdate) {
+    await bot.telegram.callApi('setMyCommands', {
+      commands,
+      scope: JSON.stringify({
+        type: 'all_private_chats'
+      })
+    });
+  }
 }
+
+// Chame a função para atualizar os comandos
+updateCommands();
+
 
 
 

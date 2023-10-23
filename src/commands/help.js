@@ -282,6 +282,12 @@ function helpCommand(bot, message) {
           inline_keyboard: [
             [
               {
+                text: "Bíblia",
+                switch_inline_query_current_chat: '',
+              },
+            ],
+            [
+              {
                 text: "Voltar",
                 callback_data: "back_to_commands",
               },

@@ -1,3 +1,5 @@
+const { UserModel, PlanoModel } = require("../database");
+
 function startCommand(bot, message) {
   if (message.chat.type !== "private") {
     return;
@@ -12,6 +14,22 @@ function startCommand(bot, message) {
     disable_web_page_preview: true,
     reply_markup: {
       inline_keyboard: [
+        [
+          {
+            text: "📖 Bíblia",
+            switch_inline_query_current_chat: '',
+          },
+        ],
+        [
+          {
+            text: "🙏 Pedidos de oração",
+            url: "https://t.me/pedidosdeoracaoperegrino",
+          },
+          {
+            text: "🪪 Minha conta",
+            callback_data: "minha_conta",
+          }
+        ],
         [
           {
             text: "✨ Adicione-me em seu grupo",
@@ -70,6 +88,118 @@ function startCommand(bot, message) {
           },
         });
       }
+    } else if (callbackQuery.data === "minha_conta") {
+      const userId = callbackQuery.from.id;
+      const user = await UserModel.findOne({ user_id: userId });
+      const plano = await PlanoModel.findOne({ user_id: userId });
+      const planoStatus = plano && plano.planoAtivo ? 'Ativo' : 'Inativo';
+      const {
+        firstname,
+        user_id,
+        diariavers,
+        fowr_private,
+        blb365,
+        dia,
+        versiculoUser,
+        motivosdeoracao,
+        horariodeoracao,
+        blocodenotas,
+        diasdeestudo,
+        translation,
+      } = user;
+
+      const getUserRank = (daysActive) => {
+        const ranks = [
+          { rank: 'Iniciante', days: 0 },
+          { rank: 'Servo', days: 7 },
+          { rank: 'Fiel', days: 14 },
+          { rank: 'Líder', days: 21 },
+          { rank: 'Guerreiro', days: 30 },
+          { rank: 'Levita', days: 60 },
+          { rank: 'Rei', days: 90 },
+          { rank: 'Pastor', days: 100 },
+          { rank: 'Discípulo', days: 120 },
+          { rank: 'Patriarca', days: 150 },
+          { rank: 'Sacerdote', days: 180 },
+          { rank: 'Evangelista', days: 210 },
+          { rank: 'Bíblico', days: 240 },
+          { rank: 'Peregrino', days: 270 },
+          { rank: 'Missionário', days: 300 },
+          { rank: 'Embaixador de Cristo', days: 400 },
+          { rank: 'Expositor da Palavra', days: 500 },
+          { rank: 'Conhecedor da Verdade', days: 800 },
+          { rank: 'Remido de Deus', days: 900 },
+          { rank: 'Vaso de Honra', days: 1000 },
+          { rank: 'Teológo', days: 1500 },
+
+        ];
+
+        let userRank = 'Iniciante';
+
+        for (let i = ranks.length - 1; i >= 0; i--) {
+          if (daysActive >= ranks[i].days) {
+            userRank = ranks[i].rank;
+            break;
+          }
+        }
+
+        return userRank;
+      };
+
+      const userRank = getUserRank(diasdeestudo);
+
+      let statusMessage = `<b>Informações do usuário:</b>\n\n`;
+      statusMessage += `<b>🪪 Nome:</b> <a href="tg://user?id=${user_id}">${firstname}</a>\n`;
+      statusMessage += `<b>⏰ Recebe versos diários:</b> ${diariavers ? 'Sim' : 'Não'}\n`;
+      statusMessage += `<b>🗂 Recebe informativos:</b> ${fowr_private ? 'Sim' : 'Não'}\n`;
+      statusMessage += `<b>📆 Plano de 365 dias:</b> ${blb365 ? 'Ativo' : 'Desativado'}\n`;
+
+      if (blb365) {
+        statusMessage += `<b>📅 Dia:</b> <code>${dia}</code>/365\n`;
+        statusMessage += `<b>📜Versículo:</b> <code>${versiculoUser}</code>/31105\n`;
+      }
+
+      statusMessage += `<b>🙏 Motivos de oração:</b> ${motivosdeoracao.length} motivos\n`;
+      motivosdeoracao.forEach((motivo, index) => {
+        statusMessage += `<b>         ${index + 1} -</b> ${motivo}\n`;
+      });
+
+      statusMessage += `<b>🔔 Alerta de oração:</b> ${horariodeoracao || 'Não definido'}\n`;
+
+      statusMessage += `<b>📝 Anotações:</b> ${blocodenotas.length} anotações\n`;
+      blocodenotas.forEach((anotacao, index) => {
+        statusMessage += `<b>         ${index + 1} -</b> ${anotacao}\n`;
+      });
+      if (plano && plano.plano1) {
+        statusMessage += `<b>📖 Plano:</b> Transformado\n`;
+      }
+
+      if (plano && plano.plano2) {
+        statusMessage += `<b>📖 Plano:</b> Sabedoria Divina\n`;
+      }
+      if (plano && plano.planosConcluidos) {
+        statusMessage += `<b>✅ Plano Concluídos:</b> ${plano && plano.planosConcluidos ? plano.planosConcluidos : 0} planos\n`;
+      }
+      statusMessage += `<b>⚡️ Atividade no bot:</b> ${diasdeestudo} dias\n`;
+      statusMessage += `<b>📈 Rank:</b> ${userRank}\n`;
+      statusMessage += `<b>🖌 Tradução:</b> ${translation.toUpperCase()}`;
+
+      await bot.editMessageText(statusMessage, {
+        parse_mode: "HTML",
+        disable_web_page_preview: true,
+        chat_id: chatId,
+        message_id: messageId,
+        reply_markup: {
+          inline_keyboard: [
+            [
+              {
+                text: "Voltar",
+                callback_data: "back_to_start",
+              },
+            ],
+          ],
+        },
+      });
     } else if (callbackQuery.data === "back_to_start") {
       await bot.editMessageText(msgstart, {
         parse_mode: "HTML",

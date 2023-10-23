@@ -39,33 +39,28 @@ const commands = [
   { command: 'status', description: 'Ver os status no bot' },
 ];
 
-async function updateCommands() {
-  const myCommands = await bot.telegram.getMyCommands();
+const myCommands = bot.getMyCommands();
 
-  let needUpdate = false;
+let needUpdate = false;
 
-  if (myCommands.length !== commands.length) {
-    needUpdate = true;
-  } else {
-    for (let i = 0; i < commands.length; i++) {
-      const myCommand = myCommands.find(c => c.command === commands[i].command);
-      if (!myCommand || myCommand.description !== commands[i].description) {
-        needUpdate = true;
-        break;
-      }
+if (myCommands.length !== commands.length) {
+  needUpdate = true;
+} else {
+  for (let i = 0; i < commands.length; i++) {
+    const myCommand = myCommands.find(c => c.command === commands[i].command);
+    if (!myCommand || myCommand.description !== commands[i].description) {
+      needUpdate = true;
+      break;
     }
-  }
-
-  if (needUpdate) {
-    await bot.telegram.setMyCommands({
-      commands,
-      scope: { type: 'all_private_chats' }
-    });
   }
 }
 
-// Chame a função para atualizar os comandos
-updateCommands();
+if (needUpdate) {
+  bot.setMyCommands({
+    commands,
+    scope: { type: 'all_private_chats' }
+  });
+}
 
 
 

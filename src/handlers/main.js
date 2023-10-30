@@ -1122,48 +1122,60 @@ bot.on('callback_query', async (callbackQuery) => {
   const messageCancel = '❌ Envio cancelado. Use o comando /oracao novamente se desejar enviar uma nova oração.';
   const mensagemenvi = `⏳ Você já enviou uma solicitação de intercessão e só pode enviar novamente amanhã.`;
 
-  if (data === 'confirmar') {
-    try {
-      const nome = bot.nomeOracao;
-      const motivo = bot.motivoOracao;
-      const user = await UserModel.findOne({ user_id: userId });
 
-      const date = new Date();
-      const day = date.getDate();
-      const month = date.getMonth() + 1;
-      const year = date.getFullYear();
+  try {
+    const user = await UserModel.findOne({ user_id: userId });
 
-      const currentDate = `${day}/${month}/${year}`;
-
-      if (user.last_interaction && user.last_interaction === currentDate) {
-        bot.editMessageText(mensagemenvi, {
-          parse_mode: "HTML",
-          disable_web_page_preview: true,
-          chat_id: chatId,
-          message_id: messageId,
-        });
-      } else {
-        user.last_interaction = currentDate;
-        bot.editMessageText(messageConfirm, {
-          parse_mode: "HTML",
-          disable_web_page_preview: true,
-          chat_id: chatId,
-          message_id: messageId,
-        });
-        await bot.sendMessage(owner, `Pedido de oração:\n\nNome: ${nome}\nMotivo: ${motivo}`);
-        user.save();
-      }
-    } catch (err) {
-      console.error('Erro ao salvar oração:', err);
-      bot.sendMessage(chatId, 'Ocorreu um erro ao enviar a oração. Tente novamente mais tarde.');
+    if (user && !user.receivedPlusOne) {
+      user.receivedPlusOne = true;
+      await user.save();
     }
-  } else if (data === 'cancelar') {
-    bot.editMessageText(messageCancel, {
-      parse_mode: "HTML",
-      disable_web_page_preview: true,
-      chat_id: chatId,
-      message_id: messageId,
-    });
+
+    if (data === 'confirmar') {
+      try {
+        const nome = bot.nomeOracao;
+        const motivo = bot.motivoOracao;
+        const user = await UserModel.findOne({ user_id: userId });
+
+        const date = new Date();
+        const day = date.getDate();
+        const month = date.getMonth() + 1;
+        const year = date.getFullYear();
+
+        const currentDate = `${day}/${month}/${year}`;
+
+        if (user.last_interaction && user.last_interaction === currentDate) {
+          bot.editMessageText(mensagemenvi, {
+            parse_mode: "HTML",
+            disable_web_page_preview: true,
+            chat_id: chatId,
+            message_id: messageId,
+          });
+        } else {
+          user.last_interaction = currentDate;
+          bot.editMessageText(messageConfirm, {
+            parse_mode: "HTML",
+            disable_web_page_preview: true,
+            chat_id: chatId,
+            message_id: messageId,
+          });
+          await bot.sendMessage(owner, `Pedido de oração:\n\nNome: ${nome}\nMotivo: ${motivo}`);
+          user.save();
+        }
+      } catch (err) {
+        console.error('Erro ao salvar oração:', err);
+        bot.sendMessage(chatId, 'Ocorreu um erro ao enviar a oração. Tente novamente mais tarde.');
+      }
+    } else if (data === 'cancelar') {
+      bot.editMessageText(messageCancel, {
+        parse_mode: "HTML",
+        disable_web_page_preview: true,
+        chat_id: chatId,
+        message_id: messageId,
+      });
+    }
+  } catch (err) {
+    console.error('Erro ao verificar o usuário:', err);
   }
 });
 
@@ -2225,16 +2237,25 @@ async function sendCongratulatoryMessage() {
     const users = await UserModel.find({ receivedPlusOne: true });
 
     for (const user of users) {
-      const message = `<b>Perseverança atual: ${user.diasdeestudo}</b>\n\n<i>Mantenha o seu ritmo! 📖🙏</i>`;
+      if (user.receivedPlusOne) {
+        // Executa a ação se receivedPlusOne for true
+        const message = `<b>Perseverança atual: ${user.diasdeestudo}</b>\n\n<i>Mantenha o seu ritmo! 📖🙏</i>`;
 
-      bot.sendMessage(
-        user.user_id,
-        message,
-        { parse_mode: 'HTML' }
-      );
+        bot.sendMessage(
+          user.user_id,
+          message,
+          { parse_mode: 'HTML' }
+        );
 
-      user.diasdeestudo += 1;
-      user.receivedPlusOne = false;
+        // Modifica os valores de diasdeestudo e receivedPlusOne
+        user.diasdeestudo += 1;
+        user.receivedPlusOne = false;
+      } else {
+        // Caso receivedPlusOne seja false, define diasdeestudo como 0
+        user.diasdeestudo = 0;
+      }
+
+      // Salva as alterações no banco de dados
       await user.save();
     }
   } catch (error) {
@@ -2242,24 +2263,10 @@ async function sendCongratulatoryMessage() {
   }
 }
 
-const loser = new CronJob('40 59 23 * * *', sendCongratulatoryMessage, null, true, "America/Sao_Paulo");
+const loser = new CronJob('50 59 23 * * *', sendCongratulatoryMessage, null, true, "America/Sao_Paulo");
 loser.start();
 
-async function sendLoserMessage() {
-  try {
-    const users = await UserModel.find({ receivedPlusOne: false });
 
-    for (const user of users) {
-      user.diasdeestudo = 0;
-      await user.save();
-    }
-  } catch (error) {
-    console.error('Erro ao enviar a mensagem:', error);
-  }
-}
-
-const estudo = new CronJob('20 59 23 * * *', sendLoserMessage, null, true, "America/Sao_Paulo");
-estudo.start();
 
 // STATUS
 

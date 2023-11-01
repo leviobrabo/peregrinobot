@@ -2239,6 +2239,10 @@ async function sendCongratulatoryMessage() {
     for (const user of users) {
       if (user.receivedPlusOne) {
         // Executa a ação se receivedPlusOne for true
+        
+        // Modifica os valores de diasdeestudo e receivedPlusOne
+        user.diasdeestudo += 1;
+        user.receivedPlusOne = false;
         const message = `<b>Perseverança atual: ${user.diasdeestudo}</b>\n\n<i>Mantenha o seu ritmo! 📖🙏</i>`;
 
         bot.sendMessage(
@@ -2246,10 +2250,6 @@ async function sendCongratulatoryMessage() {
           message,
           { parse_mode: 'HTML' }
         );
-
-        // Modifica os valores de diasdeestudo e receivedPlusOne
-        user.diasdeestudo += 1;
-        user.receivedPlusOne = false;
       } else {
         // Caso receivedPlusOne seja false, define diasdeestudo como 0
         user.diasdeestudo = 0;

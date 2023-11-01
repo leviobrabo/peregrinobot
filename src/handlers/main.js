@@ -5548,3 +5548,26 @@ DivorcioJob.start();
 bot.on("polling_error", (error) => {
   console.error(`Erro no bot de polling: ${error}`);
 });
+
+function sendBotOnlineMessage() {
+    console.log(`Toguro iniciado com sucesso...`);
+    bot.sendMessage(groupId, `#Toguro #ONLINE\n\nBot is now playing ...`);
+}
+
+function sendBotOfflineMessage() {
+    console.log(`Toguro encerrado com sucesso...`);
+    bot.sendMessage(groupId, `#Toguro #OFFLINE\n\nBot is now off ...`)
+        .then(() => {
+            process.exit(0); // Encerra o processo do bot após enviar a mensagem offline
+        })
+        .catch((error) => {
+            console.error("Erro ao enviar mensagem de desligamento:", error);
+            process.exit(1); // Encerra o processo com um código de erro
+        });
+}
+
+process.on('SIGINT', () => {
+    sendBotOfflineMessage();
+});
+
+sendBotOnlineMessage();

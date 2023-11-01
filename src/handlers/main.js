@@ -5550,13 +5550,13 @@ bot.on("polling_error", (error) => {
 });
 
 function sendBotOnlineMessage() {
-    console.log(`Toguro iniciado com sucesso...`);
-    bot.sendMessage(groupId, `#Toguro #ONLINE\n\nBot is now playing ...`);
+    console.log(`Peregrino iniciado com sucesso...`);
+    bot.sendMessage(groupId, `#Peregrino #ONLINE\n\nBot is now playing ...`);
 }
 
 function sendBotOfflineMessage() {
-    console.log(`Toguro encerrado com sucesso...`);
-    bot.sendMessage(groupId, `#Toguro #OFFLINE\n\nBot is now off ...`)
+    console.log(`Peregrino encerrado com sucesso...`);
+    bot.sendMessage(groupId, `#Peregrino #OFFLINE\n\nBot is now off ...`)
         .then(() => {
             process.exit(0); // Encerra o processo do bot após enviar a mensagem offline
         })

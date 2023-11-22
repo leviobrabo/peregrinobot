@@ -1375,8 +1375,6 @@ userJob.start();
 bot.on("callback_query", async (query) => {
   const userId = query.from.id;
   const chatId = query.from.id;
-  const messageId = callbackQuery.message.message_id;
-  const data = callbackQuery.data;
   const user = await UserModel.findOne({ user_id: userId });
   const chat = await ChatModel.findOne({ chatId: chatId });
 
@@ -1770,10 +1768,10 @@ bot.on("callback_query", async (query) => {
       }
     }
     else if (comando[1] == "intercessao") {
-      const chatId = callbackQuery.message.chat.id;
-      const userId = callbackQuery.from.id;
-      const data = callbackQuery.data;
-      const messageId = callbackQuery.message.message_id;
+      const chatId = query.message.chat.id;
+      const userId = query.from.id;
+      const data = query.data;
+      const messageId = query.message.message_id;
 
       const messageConfirm = '✅ Sua oração foi enviada para revisão e quando autorizada será postada no canal. Acesse @pedidosdeoracaoperegrino';
       const messageCancel = '❌ Envio cancelado. Use o comando /oracao novamente se desejar enviar uma nova oração.';

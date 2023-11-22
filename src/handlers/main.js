@@ -1790,10 +1790,52 @@ bot.on("callback_query", async (query) => {
           chat_id: chatId,
           message_id: messageId,
         });
-        await bot.sendMessage(owner, `Pedido de oração:\n\nNome: ${nome}\nMotivo: ${motivo}`);
+        await bot.sendMessage(owner, `Pedido de oração:\n\nNome: ${nome}\nMotivo: ${motivo}`, {
+          reply_markup: {
+            inline_keyboard: [
+              [
+                { text: 'Sim', callback_data: 'confirmar-channnel' },
+                { text: 'Não', callback_data: 'cancelar-channel' },
+              ],
+            ],
+          },
+        })
       }
 
       if (data === 'cancelar-intercessao') {
+        bot.editMessageText(messageCancel, {
+          parse_mode: "HTML",
+          disable_web_page_preview: true,
+          chat_id: chatId,
+          message_id: messageId,
+        });
+      }
+    }
+    else if (comando[1] == "channnel") {
+      const chatId = query.message.chat.id;
+      const userId = query.from.id;
+      const data = query.data;
+      const messageId = query.message.message_id;
+
+      const messageConfirm = '✅ Sua oração enviada para o canal. Acesse @pedidosdeoracaoperegrino';
+      const messageCancel = '❌ Envio cancelado.';
+
+      if (data === 'confirmar-channnel') {
+
+
+        const nome = bot.nomeOracao;
+        const motivo = bot.motivoOracao;
+
+        bot.editMessageText(messageConfirm, {
+          parse_mode: "HTML",
+          disable_web_page_preview: true,
+          chat_id: chatId,
+          message_id: messageId,
+        });
+        await bot.sendMessage(channelIdIt, `Pedido de oração:\n\nNome: ${nome}\nMotivo: ${motivo}`)
+      }
+
+      if (data === 'cancelar-channnel') {
         bot.editMessageText(messageCancel, {
           parse_mode: "HTML",
           disable_web_page_preview: true,

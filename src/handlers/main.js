@@ -1778,7 +1778,7 @@ bot.on("callback_query", async (query) => {
       const mensagemenvi = `⏳ Você já enviou uma solicitação de intercessão e só pode enviar novamente amanhã.`;
 
 
-      if (data === 'confirmar_intercessao') {
+      if (data === 'confirmar-intercessao') {
         try {
           const nome = bot.nomeOracao;
           const motivo = bot.motivoOracao;
@@ -1813,7 +1813,7 @@ bot.on("callback_query", async (query) => {
           console.error('Erro ao salvar oração:', err);
           bot.sendMessage(chatId, 'Ocorreu um erro ao enviar a oração. Tente novamente mais tarde.');
         }
-      } else if (data === 'cancelar_intercessao') {
+      } else if (data === 'cancelar-intercessao') {
         bot.editMessageText(messageCancel, {
           parse_mode: "HTML",
           disable_web_page_preview: true,

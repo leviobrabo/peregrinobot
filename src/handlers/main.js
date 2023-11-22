@@ -1078,19 +1078,21 @@ bot.onText(/\/traducao/, async (msg) => {
 // Interseções
 
 bot.onText(/\/intercessao/, async (msg) => {
-  const chatId = msg.chat.id;
+  if (msg.chat.type !== "private") {
+    return;
+  }
   const userId = msg.from.id;
 
   try {
-    bot.sendMessage(chatId, 'Por favor, digite o seu nome de quem quer a oração:');
+    bot.sendMessage(userId, 'Por favor, digite o seu nome de quem quer a oração:');
     bot.once('message', (nomeMsg) => {
       const nome = nomeMsg.text;
 
-      bot.sendMessage(chatId, 'Por favor, digite o motivo da sua oração:');
+      bot.sendMessage(userId, 'Por favor, digite o motivo da sua oração:');
       bot.once('message', (motivoMsg) => {
         const motivo = motivoMsg.text;
 
-        bot.sendMessage(chatId, 'Você deseja enviar esta oração para revisão?', {
+        bot.sendMessage(userId, 'Você deseja enviar esta oração para revisão?', {
           reply_markup: {
             inline_keyboard: [
               [

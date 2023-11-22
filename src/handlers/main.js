@@ -1779,41 +1779,21 @@ bot.on("callback_query", async (query) => {
 
 
       if (data === 'confirmar-intercessao') {
-        try {
-          const nome = bot.nomeOracao;
-          const motivo = bot.motivoOracao;
-          const user = await UserModel.findOne({ user_id: userId });
 
-          const date = new Date();
-          const day = date.getDate();
-          const month = date.getMonth() + 1;
-          const year = date.getFullYear();
+        const nome = bot.nomeOracao;
+        const motivo = bot.motivoOracao;
+        const user = await UserModel.findOne({ user_id: userId });
 
-          const currentDate = `${day}/${month}/${year}`;
+        bot.editMessageText(messageConfirm, {
+          parse_mode: "HTML",
+          disable_web_page_preview: true,
+          chat_id: chatId,
+          message_id: messageId,
+        });
+        await bot.sendMessage(owner, `Pedido de oração:\n\nNome: ${nome}\nMotivo: ${motivo}`);
+      }
 
-          if (user.last_interaction && user.last_interaction === currentDate) {
-            bot.editMessageText(mensagemenvi, {
-              parse_mode: "HTML",
-              disable_web_page_preview: true,
-              chat_id: chatId,
-              message_id: messageId,
-            });
-          } else {
-            user.last_interaction = currentDate;
-            bot.editMessageText(messageConfirm, {
-              parse_mode: "HTML",
-              disable_web_page_preview: true,
-              chat_id: chatId,
-              message_id: messageId,
-            });
-            await bot.sendMessage(owner, `Pedido de oração:\n\nNome: ${nome}\nMotivo: ${motivo}`);
-            user.save();
-          }
-        } catch (err) {
-          console.error('Erro ao salvar oração:', err);
-          bot.sendMessage(chatId, 'Ocorreu um erro ao enviar a oração. Tente novamente mais tarde.');
-        }
-      } else if (data === 'cancelar-intercessao') {
+      if (data === 'cancelar-intercessao') {
         bot.editMessageText(messageCancel, {
           parse_mode: "HTML",
           disable_web_page_preview: true,
@@ -2366,7 +2346,8 @@ bot.onText(/\/status/, async (msg) => {
     console.error('Error retrieving user status:', error);
     bot.sendMessage(userId, 'Ocorreu um erro ao recuperar o status do usuário.');
   }
-});
+}
+);
 
 // Pesquisa do bíblia via comando
 

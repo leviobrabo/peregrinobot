@@ -1381,7 +1381,7 @@ bot.on("callback_query", async (query) => {
   // console.log(query.data);
   // console.log(query.data.startsWith('next'));
 
-  if (query.data.startsWith('prev') || query.data.startsWith('next')) {
+  if (query.data.startsWith('prev') || query.data.startsWith('next') || query.data.startsWith('confirmar') || query.data.startsWith('cancelar')) {
     let comando = query.data.split("-");
     if (comando[1] == "bible") {
       const chatId = query.message.chat.id;

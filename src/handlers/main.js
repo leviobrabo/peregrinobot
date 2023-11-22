@@ -1094,8 +1094,8 @@ bot.onText(/\/intercessao/, async (msg) => {
           reply_markup: {
             inline_keyboard: [
               [
-                { text: 'Sim', callback_data: 'confirmar' },
-                { text: 'Não', callback_data: 'cancelar' },
+                { text: 'Sim', callback_data: 'confirmar-intercessao' },
+                { text: 'Não', callback_data: 'cancelar-intercessao' },
               ],
             ],
           },
@@ -1108,74 +1108,6 @@ bot.onText(/\/intercessao/, async (msg) => {
     });
   } catch (err) {
     console.error('Erro ao buscar usuário:', err);
-  }
-});
-
-
-bot.on('callback_query', async (callbackQuery) => {
-  const chatId = callbackQuery.message.chat.id;
-  const userId = callbackQuery.from.id;
-  const data = callbackQuery.data;
-  const messageId = callbackQuery.message.message_id;
-
-  const messageConfirm = '✅ Sua oração foi enviada para revisão e quando autorizada será postada no canal. Acesse @pedidosdeoracaoperegrino';
-  const messageCancel = '❌ Envio cancelado. Use o comando /oracao novamente se desejar enviar uma nova oração.';
-  const mensagemenvi = `⏳ Você já enviou uma solicitação de intercessão e só pode enviar novamente amanhã.`;
-
-
-  try {
-    const user = await UserModel.findOne({ user_id: userId });
-
-    if (user && !user.receivedPlusOne) {
-      user.receivedPlusOne = true;
-      await user.save();
-    }
-
-    if (data === 'confirmar') {
-      try {
-        const nome = bot.nomeOracao;
-        const motivo = bot.motivoOracao;
-        const user = await UserModel.findOne({ user_id: userId });
-
-        const date = new Date();
-        const day = date.getDate();
-        const month = date.getMonth() + 1;
-        const year = date.getFullYear();
-
-        const currentDate = `${day}/${month}/${year}`;
-
-        if (user.last_interaction && user.last_interaction === currentDate) {
-          bot.editMessageText(mensagemenvi, {
-            parse_mode: "HTML",
-            disable_web_page_preview: true,
-            chat_id: chatId,
-            message_id: messageId,
-          });
-        } else {
-          user.last_interaction = currentDate;
-          bot.editMessageText(messageConfirm, {
-            parse_mode: "HTML",
-            disable_web_page_preview: true,
-            chat_id: chatId,
-            message_id: messageId,
-          });
-          await bot.sendMessage(owner, `Pedido de oração:\n\nNome: ${nome}\nMotivo: ${motivo}`);
-          user.save();
-        }
-      } catch (err) {
-        console.error('Erro ao salvar oração:', err);
-        bot.sendMessage(chatId, 'Ocorreu um erro ao enviar a oração. Tente novamente mais tarde.');
-      }
-    } else if (data === 'cancelar') {
-      bot.editMessageText(messageCancel, {
-        parse_mode: "HTML",
-        disable_web_page_preview: true,
-        chat_id: chatId,
-        message_id: messageId,
-      });
-    }
-  } catch (err) {
-    console.error('Erro ao verificar o usuário:', err);
   }
 });
 
@@ -1443,6 +1375,8 @@ userJob.start();
 bot.on("callback_query", async (query) => {
   const userId = query.from.id;
   const chatId = query.from.id;
+  const messageId = callbackQuery.message.message_id;
+  const data = callbackQuery.data;
   const user = await UserModel.findOne({ user_id: userId });
   const chat = await ChatModel.findOne({ chatId: chatId });
 
@@ -1833,6 +1767,61 @@ bot.on("callback_query", async (query) => {
           },
         };
         await bot.editMessageText(messagePlano[plano.messagePositionPlano], messageOptions);
+      }
+    }
+    else if (comando[1] == "intercessao") {
+      const chatId = callbackQuery.message.chat.id;
+      const userId = callbackQuery.from.id;
+      const data = callbackQuery.data;
+      const messageId = callbackQuery.message.message_id;
+
+      const messageConfirm = '✅ Sua oração foi enviada para revisão e quando autorizada será postada no canal. Acesse @pedidosdeoracaoperegrino';
+      const messageCancel = '❌ Envio cancelado. Use o comando /oracao novamente se desejar enviar uma nova oração.';
+      const mensagemenvi = `⏳ Você já enviou uma solicitação de intercessão e só pode enviar novamente amanhã.`;
+
+
+      if (data === 'confirmar_intercessao') {
+        try {
+          const nome = bot.nomeOracao;
+          const motivo = bot.motivoOracao;
+          const user = await UserModel.findOne({ user_id: userId });
+
+          const date = new Date();
+          const day = date.getDate();
+          const month = date.getMonth() + 1;
+          const year = date.getFullYear();
+
+          const currentDate = `${day}/${month}/${year}`;
+
+          if (user.last_interaction && user.last_interaction === currentDate) {
+            bot.editMessageText(mensagemenvi, {
+              parse_mode: "HTML",
+              disable_web_page_preview: true,
+              chat_id: chatId,
+              message_id: messageId,
+            });
+          } else {
+            user.last_interaction = currentDate;
+            bot.editMessageText(messageConfirm, {
+              parse_mode: "HTML",
+              disable_web_page_preview: true,
+              chat_id: chatId,
+              message_id: messageId,
+            });
+            await bot.sendMessage(owner, `Pedido de oração:\n\nNome: ${nome}\nMotivo: ${motivo}`);
+            user.save();
+          }
+        } catch (err) {
+          console.error('Erro ao salvar oração:', err);
+          bot.sendMessage(chatId, 'Ocorreu um erro ao enviar a oração. Tente novamente mais tarde.');
+        }
+      } else if (data === 'cancelar_intercessao') {
+        bot.editMessageText(messageCancel, {
+          parse_mode: "HTML",
+          disable_web_page_preview: true,
+          chat_id: chatId,
+          message_id: messageId,
+        });
       }
     }
   } else if (["aa", "acf", "ara", "arc", "as21", "jfaa", "kja", "kjf", "naa", "nbv", "ntlh", "nvi", "nvt", "tb", "back"].includes(query.data)) {
@@ -2239,7 +2228,7 @@ async function sendCongratulatoryMessage() {
     for (const user of users) {
       if (user.receivedPlusOne) {
         // Executa a ação se receivedPlusOne for true
-        
+
         // Modifica os valores de diasdeestudo e receivedPlusOne
         user.diasdeestudo += 1;
         user.receivedPlusOne = false;
@@ -5550,24 +5539,24 @@ bot.on("polling_error", (error) => {
 });
 
 function sendBotOnlineMessage() {
-    console.log(`Peregrino iniciado com sucesso...`);
-    bot.sendMessage(groupId, `#Peregrino #ONLINE\n\nBot is now playing ...`);
+  console.log(`Peregrino iniciado com sucesso...`);
+  bot.sendMessage(groupId, `#Peregrino #ONLINE\n\nBot is now playing ...`);
 }
 
 function sendBotOfflineMessage() {
-    console.log(`Peregrino encerrado com sucesso...`);
-    bot.sendMessage(groupId, `#Peregrino #OFFLINE\n\nBot is now off ...`)
-        .then(() => {
-            process.exit(0); // Encerra o processo do bot após enviar a mensagem offline
-        })
-        .catch((error) => {
-            console.error("Erro ao enviar mensagem de desligamento:", error);
-            process.exit(1); // Encerra o processo com um código de erro
-        });
+  console.log(`Peregrino encerrado com sucesso...`);
+  bot.sendMessage(groupId, `#Peregrino #OFFLINE\n\nBot is now off ...`)
+    .then(() => {
+      process.exit(0); // Encerra o processo do bot após enviar a mensagem offline
+    })
+    .catch((error) => {
+      console.error("Erro ao enviar mensagem de desligamento:", error);
+      process.exit(1); // Encerra o processo com um código de erro
+    });
 }
 
 process.on('SIGINT', () => {
-    sendBotOfflineMessage();
+  sendBotOfflineMessage();
 });
 
 sendBotOnlineMessage();

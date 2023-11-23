@@ -2002,6 +2002,63 @@ bot.on("callback_query", async (query) => {
       reply_markup: options.reply_markup,
     });
   } else if (data === "back_to_commands") {
+    const functions = {
+      parse_mode: "HTML",
+      reply_markup: {
+        inline_keyboard: [
+          [
+            {
+              text: "🙏 Oração",
+              callback_data: "oracao",
+            },
+            {
+              text: "📝 Anotação",
+              callback_data: "anotacao",
+            },
+          ],
+          [
+            {
+              text: "🖌 Traduções",
+              callback_data: "traducao",
+            },
+          ],
+          [
+            {
+              text: "📆 Plano bíblico",
+              callback_data: "biblico",
+            },
+            {
+              text: "📖 Planos",
+              callback_data: "planos",
+            },
+          ],
+          [
+            {
+              text: "⏰ Versículos",
+              callback_data: "versiculos",
+            },
+          ],
+          [
+            {
+              text: "⚡️ Atividade",
+              callback_data: "atividade",
+            },
+            {
+              text: "🔎 Bíblia inline",
+              callback_data: "bibliainline",
+            },
+          ],
+          [
+            {
+              text: "Voltar",
+              callback_data: "back_to_help",
+            },
+          ],
+        ],
+      },
+    }
+    const funcao = `<b>As funções do bot</b>\n\nClique nos botões abaixo para saber informações de cada funcionalidade do bot.\n\nPara ter acesso a lista de comandos, digite /comandos`
+
     await bot.editMessageText(funcao, {
       parse_mode: "HTML",
       disable_web_page_preview: true,

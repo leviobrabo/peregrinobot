@@ -1879,7 +1879,7 @@ bot.on("callback_query", async (query) => {
       },
     });
   }
-  else if (callbackQuery.data === "commands") {
+  else if (data === "commands") {
     const functions = {
       parse_mode: "HTML",
       reply_markup: {
@@ -1944,7 +1944,7 @@ bot.on("callback_query", async (query) => {
       message_id: messageId,
       reply_markup: functions.reply_markup,
     });
-  } else if (callbackQuery.data === "donate") {
+  } else if (data === "donate") {
     const resposta_donate = `Olá, ${firstName}! \n\nContribua com qualquer valor para ajudar a manter o servidor do bot online e com mais recursos! Sua ajuda é fundamental para mantermos o bot funcionando de forma eficiente e com novas funcionalidades. \n\nPara fazer uma doação, utilize a chave PIX a seguir: \nPix: <code>32dc79d2-2868-4ef0-a277-2c10725341d4</code>\nBanco: Picpay\nNome: Luzia\n\nObrigado pela sua contribuição! 🙌\n\n<b>BTC:</b> <code>bc1qjxzlug0cwnfjrhacy9kkpdzxfj0mcxc079axtl</code>\n<b>ETH/USDT:</b> <code>0x1fbde0d2a96869299049f4f6f78fbd789d167d1b</code>`;
 
     await bot.editMessageText(resposta_donate, {
@@ -1963,7 +1963,7 @@ bot.on("callback_query", async (query) => {
         ],
       },
     })
-  } else if (callbackQuery.data === "back_to_help") {
+  } else if (data === "back_to_help") {
     await bot.editMessageText(text, {
       parse_mode: "HTML",
       disable_web_page_preview: true,
@@ -1971,7 +1971,7 @@ bot.on("callback_query", async (query) => {
       message_id: messageId,
       reply_markup: options.reply_markup,
     });
-  } else if (callbackQuery.data === "back_to_commands") {
+  } else if (data === "back_to_commands") {
     await bot.editMessageText(funcao, {
       parse_mode: "HTML",
       disable_web_page_preview: true,
@@ -1979,7 +1979,7 @@ bot.on("callback_query", async (query) => {
       message_id: messageId,
       reply_markup: functions.reply_markup,
     });
-  } else if (callbackQuery.data === "oracao") {
+  } else if (data === "oracao") {
     const msgoracao = '<b>Para adicionar seus motivos de oração, siga estas etapas:</b>\n\n' +
       '1. <code>/oracao</code> - Visualiza seus motivos de oração.\n' +
       '2. <code>/addmotivo</code> &lt;motivo&gt; - Adiciona um novo motivo de oração.\n' +
@@ -2004,7 +2004,7 @@ bot.on("callback_query", async (query) => {
         ],
       },
     });
-  } else if (callbackQuery.data === "anotacao") {
+  } else if (data === "anotacao") {
     const msganotacao = '<b>Para usar os comandos de anotação, siga estas etapas:</b>\n\n<b>1.</b> Digite <code>/anotacao</code> para visualizar suas anotações.\n<b>2.</b> Use <code>/addanotacao</code> &lt;texto que deseja anotar aqui&gt; para adicionar uma nova anotação.\n<b>3.</b> Utilize <code>/delanotacao</code> &lt;número&gt; para remover uma anotação específica.\n\n<b>Certifique-se de ter no máximo 10 anotações cadastradas e usar somente 200 caracteres. Para mais informações digite: /ajudaanotacao</b>';
     await bot.editMessageText(msganotacao, {
       parse_mode: "HTML",
@@ -2022,7 +2022,7 @@ bot.on("callback_query", async (query) => {
         ],
       },
     });
-  } else if (callbackQuery.data === "traducao") {
+  } else if (data === "traducao") {
     const msgatraducao = '<b>O Pelegrino possibilita que você escolha dentre 14 traduções a sua preferida</b>\n\nPela glória de Deus possuímos irmãos dedicados na propagação o Evangelho de Cristo, e com a ajuda do programadores <a href="https://github.com/damarals/biblias">Daniel Amaral</a> e <a href="https://github.com/thiagobodruk/biblia">Thiago Bodruk</a>\n\nPara saber mais digite: /infotradu!';
     await bot.editMessageText(msgatraducao, {
       parse_mode: "HTML",
@@ -2040,7 +2040,7 @@ bot.on("callback_query", async (query) => {
         ],
       },
     });
-  } else if (callbackQuery.data === "biblico") {
+  } else if (data === "biblico") {
     const msgplanobiblico = '<b>Plano bíblico 365 dias</b>\n\nEsse plano bíblico segue a linha canônica, então vai direto para a Bíblia de Gênesis a Apocalipse. Você receberá leituras para cada dia da semana como um guia constante para terminar a Bíblia inteira em um ano.\n\nEnvie /planobiblico para iniciar o plano!\nE se quiser mudar a tradução digita /traducao';
     await bot.editMessageText(msgplanobiblico, {
       parse_mode: "HTML",
@@ -2058,7 +2058,7 @@ bot.on("callback_query", async (query) => {
         ],
       },
     });
-  } else if (callbackQuery.data === "planos") {
+  } else if (data === "planos") {
     const msgplano = '<b>O Pelegrino possui inúmeros planos bíblicos</b>\n\nEsses planos são projetados para ajudar as pessoas a se envolverem regularmente com a Palavra de Deus, fornecendo uma estrutura para ler a Bíblia de forma consistente ao longo de um período de tempo.\n\nEnvie /plano para escolher um plano e /topplanos para ver o ranking';
     await bot.editMessageText(msgplano, {
       parse_mode: "HTML",
@@ -2076,7 +2076,7 @@ bot.on("callback_query", async (query) => {
         ],
       },
     });
-  } else if (callbackQuery.data === "versiculos") {
+  } else if (data === "versiculos") {
     const msgplano = '<b>O Pelegrino envia diariamente versículos bíblicos</b>\n\nO envio acontece às 8 horas, e é enviado um versículo por dia\n\nEnvie /verson para ativar e /versoff para desativar o envio!\n\nO envio de versículo também ocorrer para os grupos, basta colocar o bot como administrador no grupo e escolher um tema: /verstema e escolher entre Adoração, Amor, Consolo, Encorajamento, Fé'; await bot.editMessageText(msgplano, {
       parse_mode: "HTML",
       disable_web_page_preview: true,
@@ -2093,7 +2093,7 @@ bot.on("callback_query", async (query) => {
         ],
       },
     });
-  } else if (callbackQuery.data === "atividade") {
+  } else if (data === "atividade") {
     const msgatividade = '<b>O Pelegrino possui um sistema que contabiliza os dias de uso no bot</b>\n\nE possuímos um sistema de rank que disponibiliza níveis (de forma ludica) que é alcançado a cada perseverança \n\nEnvie /dia para saber maiis e /topdias para ver o ranking';
     await bot.editMessageText(msgatividade, {
       parse_mode: "HTML",
@@ -2111,7 +2111,7 @@ bot.on("callback_query", async (query) => {
         ],
       },
     });
-  } else if (callbackQuery.data === "bibliainline") {
+  } else if (data === "bibliainline") {
     const msginline = '<b>O Pelegrino possui uma bíblia inline</b>\n\nVocê pode tá se perguntando o que seria isso... basicamente é uma consulta por uma linha de comando, isto é, você pode consultar a bíblia em qualquer lugar do telegram (Grupos, Canais e chat privado).\n\nBasta enviar <code>@operegrino_bot Gênesis 1</code>\n<code>@operegrino_bot gn 1</code>\n<code>@operegrino_bot ap 1:2</code>\n<code>@operegrino_bot ex 1:5-8</code>.\n\nPara acessar a lista dos nome dos livros ou abreviações digite: /livros !';
     await bot.editMessageText(msginline, {
       parse_mode: "HTML",
@@ -2135,7 +2135,7 @@ bot.on("callback_query", async (query) => {
         ],
       },
     });
-  } else if (callbackQuery.data === "edit_caption") {
+  } else if (data === "edit_caption") {
     const newCaption = `<b>SOBRE O BOT</b>\n\nEste bot foi inspirado na <a href="https://www.bible.com/pt">Bíblia YourVersion</a> e tem como objetivo principal propagar a palavra de Deus e auxiliar no estudo das escrituras sagradas. O bot oferece acesso fácil a 14 diferentes traduções bíblicas. (/infotradu)\n\nCom um acervo variado, os usuários podem escolher a versão preferida para leitura e estudo, atendendo às suas necessidades individuais de compreensão e interpretação das Escrituras. Essa diversidade de traduções proporciona uma experiência enriquecedora e abrangente.\n\nAlém das traduções, o bot disponibiliza recursos complementares, como planos bíblicos e versículos bíblicos diários\n\n<i>Agradeço sinceramente a <a href="https://t.me/peterinvest">Peter</a> pelo apoio e orientação durante o desenvolvimento deste bot.</i>\n\nQue este bot seja uma ferramenta valiosa e inspiradora para todos que buscam se conectar com a Palavra de Deus e fortalecer sua espiritualidade.`;
 
     const backToStartButton = [
@@ -2149,7 +2149,7 @@ bot.on("callback_query", async (query) => {
       },
     ];
 
-    const currentMessage = callbackQuery.message.text;
+    const currentMessage = query.message.text;
     if (currentMessage !== newCaption) {
       await bot.editMessageText(newCaption, {
         parse_mode: "HTML",
@@ -2160,8 +2160,8 @@ bot.on("callback_query", async (query) => {
         },
       });
     }
-  } else if (callbackQuery.data === "minha_conta") {
-    const userId = callbackQuery.from.id;
+  } else if (data === "minha_conta") {
+    const userId = query.from.id;
     const user = await UserModel.findOne({ user_id: userId });
     const plano = await PlanoModel.findOne({ user_id: userId });
     const planoStatus = plano && plano.planoAtivo ? 'Ativo' : 'Inativo';
@@ -2272,7 +2272,7 @@ bot.on("callback_query", async (query) => {
         ],
       },
     });
-  } else if (callbackQuery.data === "back_to_start") {
+  } else if (data === "back_to_start") {
     await bot.editMessageText(msgstart, {
       parse_mode: "HTML",
       chat_id: chatId,

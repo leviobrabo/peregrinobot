@@ -1380,6 +1380,7 @@ bot.on("callback_query", async (query) => {
   const data = query.data;
   const user = await UserModel.findOne({ user_id: userId });
   const chat = await ChatModel.findOne({ chatId: chatId });
+  const messageId = query.message.message_id;
 
   // console.log(query.data);
   // console.log(query.data.startsWith('next'));

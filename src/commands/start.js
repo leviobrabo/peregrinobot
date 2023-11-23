@@ -1,5 +1,3 @@
-const { UserModel, PlanoModel } = require("../database");
-
 function startCommand(bot, message) {
   if (message.chat.type !== "private") {
     return;

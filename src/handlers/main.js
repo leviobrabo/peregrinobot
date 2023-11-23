@@ -1377,6 +1377,7 @@ userJob.start();
 bot.on("callback_query", async (query) => {
   const userId = query.from.id;
   const chatId = query.from.id;
+  const data = query.data;
   const user = await UserModel.findOne({ user_id: userId });
   const chat = await ChatModel.findOne({ chatId: chatId });
 

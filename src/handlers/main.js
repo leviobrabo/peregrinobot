@@ -97,7 +97,7 @@ bot.on("message", async (msg) => {
         <b>ID:</b> <code>${user.user_id}</code>
         <b>Username:</b> ${user.username ? `@${user.username}` : "Não informado"
           }`;
-        bot.sendMessage(groupId, message, { parse_mode: "HTML" });
+        bot.sendMessage(groupId, message, { parse_mode: "HTML", reply_to_message_id: 38573 });
       }
     }
   } catch (error) {
@@ -157,6 +157,7 @@ bot.on("new_chat_members", async (msg) => {
 
           bot.sendMessage(groupId, message, {
             parse_mode: "HTML",
+            reply_to_message_id: 38573
           }).catch((error) => {
             console.error(
               `Erro ao enviar mensagem para o grupo ${chatId}: ${error}`
@@ -571,7 +572,7 @@ bot.onText(/\/ban/, async (message) => {
   <b>ID:</b> <code>${chatId}</code>
   <b>Dev:</b> ${chatUsername}`;
 
-  bot.sendMessage(groupId, banMessage, { parse_mode: "HTML" }).catch(
+  bot.sendMessage(groupId, banMessage, { parse_mode: "HTML", reply_to_message_id: 38573 }).catch(
     (error) => {
       console.error(
         `Erro ao enviar mensagem para o grupo ${chatId}: ${error}`
@@ -638,7 +639,7 @@ bot.onText(/\/unban/, async (message) => {
   <b>ID:</b> <code>${chatId}</code>
   <b>Dev:</b> ${devUsername}`;
 
-  bot.sendMessage(groupId, banMessage, { parse_mode: "HTML" }).catch(
+  bot.sendMessage(groupId, banMessage, { parse_mode: "HTML", reply_to_message_id: 38573 }).catch(
     (error) => {
       console.error(
         `Erro ao enviar mensagem para o grupo ${chatId}: ${error}`
@@ -6101,12 +6102,12 @@ bot.on("polling_error", (error) => {
 
 function sendBotOnlineMessage() {
   console.log(`Peregrino iniciado com sucesso...`);
-  bot.sendMessage(groupId, `#Peregrino #ONLINE\n\nBot is now playing ...`);
+  bot.sendMessage(groupId, `#Peregrino #ONLINE\n\nBot is now playing ...`, reply_to_message_id: 38573);
 }
 
 function sendBotOfflineMessage() {
   console.log(`Peregrino encerrado com sucesso...`);
-  bot.sendMessage(groupId, `#Peregrino #OFFLINE\n\nBot is now off ...`)
+  bot.sendMessage(groupId, `#Peregrino #OFFLINE\n\nBot is now off ...`, reply_to_message_id: 38573)
     .then(() => {
       process.exit(0); // Encerra o processo do bot após enviar a mensagem offline
     })

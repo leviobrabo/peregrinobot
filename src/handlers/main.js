@@ -6102,12 +6102,12 @@ bot.on("polling_error", (error) => {
 
 function sendBotOnlineMessage() {
   console.log(`Peregrino iniciado com sucesso...`);
-  bot.sendMessage(groupId, `#Peregrino #ONLINE\n\nBot is now playing ...`, reply_to_message_id: 38573);
+  bot.sendMessage(groupId, `#Peregrino #ONLINE\n\nBot is now playing ...`, { reply_to_message_id: 38573 });
 }
 
 function sendBotOfflineMessage() {
   console.log(`Peregrino encerrado com sucesso...`);
-  bot.sendMessage(groupId, `#Peregrino #OFFLINE\n\nBot is now off ...`, reply_to_message_id: 38573)
+  bot.sendMessage(groupId, `#Peregrino #OFFLINE\n\nBot is now off ...`, { reply_to_message_id: 38573} )
     .then(() => {
       process.exit(0); // Encerra o processo do bot após enviar a mensagem offline
     })

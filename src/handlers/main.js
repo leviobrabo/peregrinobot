@@ -3764,15 +3764,15 @@ async function getVersiculoChannel() {
     console.error("Erro ao obter informações:", error.message);
   }
 }
-
-const versiculocanal = new CronJob(
-  "00 00 08 * * *",
-  getVersiculoChannel,
-  null,
-  true,
-  "America/Sao_Paulo"
-);
-versiculocanal.start();
+getVersiculoChannel();
+// const versiculocanal = new CronJob(
+//  "00 00 08 * * *",
+//  getVersiculoChannel,
+//  null,
+//  true,
+//  "America/Sao_Paulo"
+//);
+//versiculocanal.start();
 
 
 

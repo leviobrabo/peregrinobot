@@ -174,7 +174,7 @@ bot.on("new_chat_members", async (msg) => {
                 [
                   {
                     text: "Canal Oficial",
-                    url: "https://t.me/peregrinosbr",
+                    url: "https://t.me/peregrinobr",
                   },
                   {
                     text: "Atualizações",
@@ -2402,7 +2402,7 @@ bot.on("callback_query", async (query) => {
           [
             {
               text: "📍 Canal Oficial",
-              url: "https://t.me/peregrinosbr",
+              url: "https://t.me/peregrinobr",
             },
           ],
         ],
@@ -3301,7 +3301,7 @@ async function getVersiculoUser(userId) {
         [
           {
             text: "📢 Canal Oficial",
-            url: "https://t.me/peregrinosbr",
+            url: "https://t.me/peregrinobr",
           },
         ],
       ],
@@ -3436,7 +3436,7 @@ async function getAdoracao(chatId) {
         [
           {
             text: "📢 Canal Oficial",
-            url: "https://t.me/peregrinosbr",
+            url: "https://t.me/peregrinobr",
           },
         ],
       ],
@@ -3500,7 +3500,7 @@ async function getAmor(chatId) {
         [
           {
             text: "📢 Canal Oficial",
-            url: "https://t.me/peregrinosbr",
+            url: "https://t.me/peregrinobr",
           },
         ],
       ],
@@ -3563,7 +3563,7 @@ async function getConsolo(chatId) {
         [
           {
             text: "📢 Canal Oficial",
-            url: "https://t.me/peregrinosbr",
+            url: "https://t.me/peregrinobr",
           },
         ],
       ],
@@ -3625,7 +3625,7 @@ async function getEncorajamento(chatId) {
         [
           {
             text: "📢 Canal Oficial",
-            url: "https://t.me/peregrinosbr",
+            url: "https://t.me/peregrinobr",
           },
         ],
       ],
@@ -3688,7 +3688,7 @@ async function getFe(chatId) {
         [
           {
             text: "📢 Canal Oficial",
-            url: "https://t.me/peregrinosbr",
+            url: "https://t.me/peregrinobr",
           },
         ],
       ],
@@ -3756,7 +3756,7 @@ async function getVersiculoChannel() {
       const caption = versiculo.caption;
 
       await bot.sendPhoto(channelId, imagem, { caption, parse_mode: 'HTML' });
-
+      console.log("Enviado com sucesso para CANAL")
     } else {
       console.log("Não há informações para o dia de hoje.");
     }
@@ -3764,15 +3764,14 @@ async function getVersiculoChannel() {
     console.error("Erro ao obter informações:", error.message);
   }
 }
-getVersiculoChannel();
-// const versiculocanal = new CronJob(
-//  "00 00 08 * * *",
-//  getVersiculoChannel,
-//  null,
-//  true,
-//  "America/Sao_Paulo"
-//);
-//versiculocanal.start();
+    const versiculocanal = new CronJob(
+      "00 00 08 * * *",
+      getVersiculoChannel,
+      null,
+      true,
+      "America/Sao_Paulo"
+    );
+    versiculocanal.start();
 
 
 

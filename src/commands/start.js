@@ -47,7 +47,7 @@ function startCommand(bot, message) {
         [
           {
             text: "📍 Canal Oficial",
-            url: "https://t.me/peregrinosbr",
+            url: "https://t.me/peregrinobr",
           },
         ],
       ],

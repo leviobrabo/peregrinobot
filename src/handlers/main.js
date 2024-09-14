@@ -3765,7 +3765,7 @@ async function getVersiculoChannel() {
   }
 }
     const versiculocanal = new CronJob(
-      "00 06 04 * * *",
+      "00 00 08 * * *",
       getVersiculoChannel,
       null,
       true,

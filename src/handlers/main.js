@@ -3754,8 +3754,8 @@ async function getVersiculoChannel() {
     if (versiculo) {
       const imagem = versiculo.imagem;
       const caption = versiculo.caption;
-      const caption_new = "<b>Versículo bíblico do dia</b>\n\n<blockquote>❤️ Siga-nos: @peregrinobr</blockquote>"
-      await bot.sendPhoto(channelId, imagem, { caption_new, parse_mode: 'HTML' });
+      const caption = "<b>Versículo bíblico do dia</b>\n\n<blockquote>❤️ Siga-nos: @peregrinobr</blockquote>";
+      await bot.sendPhoto(channelId, imagem, { caption, parse_mode: 'HTML' });
       console.log("Enviado com sucesso para CANAL")
     } else {
       console.log("Não há informações para o dia de hoje.");
@@ -3765,7 +3765,7 @@ async function getVersiculoChannel() {
   }
 }
     const versiculocanal = new CronJob(
-      "00 00 08 * * *",
+      "00 05 04 * * *",
       getVersiculoChannel,
       null,
       true,

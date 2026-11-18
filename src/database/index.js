@@ -7,10 +7,13 @@ const statsSchema = require("./models/stats");
 
 dotenv.config();
 
-mongoose.connect(process.env.DB_STRING, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+mongoose.connect(process.env.DB_STRING)
+  .then(() => console.log("MongoDB conectado"))
+  .catch((error) => {
+    console.error("Falha ao conectar ao MongoDB:", error.message);
+    process.exitCode = 1;
+    process.exit();
+  });
 
 const ChatModel = mongoose.model("Chat", ChatSchema);
 const UserModel = mongoose.model("User", userSchema);

@@ -136,7 +136,7 @@ bot.on("message", async (msg) => {
         console.log(`Usuário ${msg.from.id} salvo no banco de dados.`);
 
         const message = `#${nameBot} #New_User\n        <b>User:</b> <a href="tg://user?id=${user.user_id}">${user.firstname}</a>\n        <b>ID:</b> <code>${user.user_id}</code>\n        <b>Username:</b> ${user.username ? `@${user.username}` : "Não informado"}`;
-        bot.sendMessage(groupId, message, { parse_mode: "HTML", reply_to_message_id: 38573 });
+        bot.sendMessage(groupId, message, { parse_mode: "HTML", ...(process.env.LOG_REPLY_MESSAGE_ID ? { reply_to_message_id: Number(process.env.LOG_REPLY_MESSAGE_ID) } : {}) });
       }
 
       trackCommand(commandText);
@@ -197,7 +197,7 @@ bot.on("new_chat_members", async (msg) => {
 
           bot.sendMessage(groupId, message, {
             parse_mode: "HTML",
-            reply_to_message_id: 38573
+            ...(process.env.LOG_REPLY_MESSAGE_ID ? { reply_to_message_id: Number(process.env.LOG_REPLY_MESSAGE_ID) } : {})
           }).catch((error) => {
             console.error(
               `Erro ao enviar mensagem para o grupo ${chatId}: ${error}`
@@ -738,7 +738,7 @@ bot.onText(/\/ban/, async (message) => {
   <b>ID:</b> <code>${chatId}</code>
   <b>Dev:</b> ${chatUsername}`;
 
-  bot.sendMessage(groupId, banMessage, { parse_mode: "HTML", reply_to_message_id: 38573 }).catch(
+  bot.sendMessage(groupId, banMessage, { parse_mode: "HTML", ...(process.env.LOG_REPLY_MESSAGE_ID ? { reply_to_message_id: Number(process.env.LOG_REPLY_MESSAGE_ID) } : {}) }).catch(
     (error) => {
       console.error(
         `Erro ao enviar mensagem para o grupo ${chatId}: ${error}`
@@ -805,7 +805,7 @@ bot.onText(/\/unban/, async (message) => {
   <b>ID:</b> <code>${chatId}</code>
   <b>Dev:</b> ${devUsername}`;
 
-  bot.sendMessage(groupId, banMessage, { parse_mode: "HTML", reply_to_message_id: 38573 }).catch(
+  bot.sendMessage(groupId, banMessage, { parse_mode: "HTML", ...(process.env.LOG_REPLY_MESSAGE_ID ? { reply_to_message_id: Number(process.env.LOG_REPLY_MESSAGE_ID) } : {}) }).catch(
     (error) => {
       console.error(
         `Erro ao enviar mensagem para o grupo ${chatId}: ${error}`
@@ -6900,12 +6900,12 @@ bot.on("polling_error", (error) => {
 
 function sendBotOnlineMessage() {
   console.log(`Peregrino iniciado com sucesso...`);
-  bot.sendMessage(groupId, `#Peregrino #ONLINE\n\nBot is now playing ...`, { reply_to_message_id: 38573 });
+  bot.sendMessage(groupId, `#Peregrino #ONLINE\n\nBot is now playing ...`, { ...(process.env.LOG_REPLY_MESSAGE_ID ? { reply_to_message_id: Number(process.env.LOG_REPLY_MESSAGE_ID) } : {}) });
 }
 
 function sendBotOfflineMessage() {
   console.log(`Peregrino encerrado com sucesso...`);
-  bot.sendMessage(groupId, `#Peregrino #OFFLINE\n\nBot is now off ...`, { reply_to_message_id: 38573} )
+  bot.sendMessage(groupId, `#Peregrino #OFFLINE\n\nBot is now off ...`, { ...(process.env.LOG_REPLY_MESSAGE_ID ? { reply_to_message_id: Number(process.env.LOG_REPLY_MESSAGE_ID) } : {})} )
     .then(() => {
       process.exit(0); // Encerra o processo do bot após enviar a mensagem offline
     })

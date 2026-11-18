@@ -50,7 +50,7 @@ bot.setMyCommands(groupCommands, { scope: JSON.stringify({ type: 'all_group_chat
 const adminCommands = [
   { command: 'fwdon', description: 'Receber encaminhamento no grupo' },
   { command: 'fwdoff', description: 'Não receber encaminhamento no grupo' },
-  { command: '/verstema', description: 'Escolher entre Adoração, Amor, Consolo, Encorajamento, Fé' },
+  { command: 'verstema', description: 'Escolher entre Adoração, Amor, Consolo, Encorajamento, Fé' },
 ];
 
 bot.setMyCommands(adminCommands, { scope: JSON.stringify({ type: 'all_chat_administrators' }) });

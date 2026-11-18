@@ -295,94 +295,76 @@ async function is_dev(user_id) {
 }
 
 // LISTA DE GRUPOS
+// A single callback handler prevents accumulating listeners on every /grupos call.
+const groupPages = new Map();
+const GROUP_PAGES_TTL_MS = 30 * 60 * 1000;
 
-bot.onText(/^\/grupos/, async (message) => {
-  const user_id = message.from.id;
-  if (!(await is_dev(user_id))) {
-    return;
-  }
-  if (message.chat.type !== "private") {
-    return;
-  }
+function groupPageMarkup(index, total) {
+  const buttons = [];
+  if (index > 0) buttons.push({ text: "Anterior", callback_data: `groups:${index - 1}` });
+  if (index < total - 1) buttons.push({ text: "Próxima", callback_data: `groups:${index + 1}` });
+  return { parse_mode: "HTML", reply_markup: { inline_keyboard: buttons.length ? [buttons] : [] } };
+}
 
+bot.onText(/^\\/grupos(?:@\\w+)?(?:\\s|$)/, async (message) => {
+  if (message.chat.type !== "private" || !(await is_dev(message.from.id))) return;
   try {
-    const chats = await ChatModel.find().sort({ chatId: 1 });
-
-    let contador = 1;
-    let chunkSize = 3900 - message.text.length;
-    let messageChunks = [];
-    let currentChunk = "";
-
-    for (let chat of chats) {
-      if (chat.chatId < 0) {
-        let groupMessage = `<b>${contador}:</b> <b>Group=</b> ${chat.chatName} || <b>ID:</b> <code>${chat.chatId}</code>\n`;
-        if (currentChunk.length + groupMessage.length > chunkSize) {
-          messageChunks.push(currentChunk);
-          currentChunk = "";
-        }
-        currentChunk += groupMessage;
-        contador++;
+    const chats = await ChatModel.find({ chatId: { $lt: 0 } }).sort({ chatId: 1 });
+    const escapeHtml = (value) => String(value ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    const chunks = [];
+    let current = "";
+    let count = 0;
+    for (const chat of chats) {
+      const line = `<b>${++count}:</b> <b>Group=</b> ${escapeHtml(chat.chatName)} || <b>ID:</b> <code>${chat.chatId}</code>\\n`;
+      if (current && current.length + line.length > 3900) {
+        chunks.push(current);
+        current = "";
       }
+      current += line;
     }
-    messageChunks.push(currentChunk);
-
-    let index = 0;
-
-    const markup = (index) => {
-      return {
-        reply_markup: {
-          inline_keyboard: [
-            [
-              {
-                text: `<< ${index + 1}`,
-                callback_data: `groups:${index - 1}`,
-                disabled: index === 0,
-              },
-              {
-                text: `>> ${index + 2}`,
-                callback_data: `groups:${index + 1}`,
-                disabled: index === messageChunks.length - 1,
-              },
-            ],
-          ],
-        },
-        parse_mode: "HTML",
-      };
-    };
-
-    // Verificar se o texto da mensagem está vazio
-    if (message.text.trim() === "") {
-      await bot.sendMessage(message.chat.id, "O texto está vazio.");
-    } else {
-      await bot.sendMessage(
-        message.chat.id,
-        messageChunks[index],
-        markup(index)
-      );
+    if (current) chunks.push(current);
+    if (!chunks.length) {
+      await bot.sendMessage(message.chat.id, "Nenhum grupo cadastrado.");
+      return;
     }
-
-    bot.on("callback_query", async (query) => {
-      if (query.data.startsWith("groups:")) {
-        index = Number(query.data.split(":")[1]);
-        if (
-          markup(index).reply_markup &&
-          markup(index).reply_markup.inline_keyboard
-        ) {
-          markup(index).reply_markup.inline_keyboard[0][0].disabled =
-            index === 0;
-          markup(index).reply_markup.inline_keyboard[0][1].disabled =
-            index === messageChunks.length - 1;
-        }
-        await bot.editMessageText(messageChunks[index], {
-          chat_id: query.message.chat.id,
-          message_id: query.message.message_id,
-          ...markup(index),
-        });
-        await bot.answerCallbackQuery(query.id);
-      }
-    });
+    const sent = await bot.sendMessage(message.chat.id, chunks[0], groupPageMarkup(0, chunks.length));
+    groupPages.set(`${sent.chat.id}:${sent.message_id}`, { chunks, ownerId: message.from.id, createdAt: Date.now() });
+    for (const [key, value] of groupPages) {
+      if (Date.now() - value.createdAt > GROUP_PAGES_TTL_MS) groupPages.delete(key);
+    }
   } catch (error) {
-    console.error(error);
+    console.error("Erro no comando /grupos:", error);
+  }
+});
+
+bot.on("callback_query", async (query) => {
+  if (!query.data || !/^groups:\\d+$/.test(query.data) || !query.message) return;
+  const key = `${query.message.chat.id}:${query.message.message_id}`;
+  const state = groupPages.get(key);
+  try {
+    if (!state || Date.now() - state.createdAt > GROUP_PAGES_TTL_MS) {
+      groupPages.delete(key);
+      await bot.answerCallbackQuery(query.id, { text: "Lista expirada. Use /grupos novamente." });
+      return;
+    }
+    if (query.from.id !== state.ownerId) {
+      await bot.answerCallbackQuery(query.id, { text: "Esta lista pertence a outro usuário." });
+      return;
+    }
+    const index = Number(query.data.slice("groups:".length));
+    if (!Number.isSafeInteger(index) || index < 0 || index >= state.chunks.length) {
+      await bot.answerCallbackQuery(query.id, { text: "Página inválida." });
+      return;
+    }
+    await bot.editMessageText(state.chunks[index], {
+      chat_id: query.message.chat.id,
+      message_id: query.message.message_id,
+      ...groupPageMarkup(index, state.chunks.length),
+    });
+    await bot.answerCallbackQuery(query.id);
+  } catch (error) {
+    console.error("Erro na paginação de grupos:", error);
+    await bot.answerCallbackQuery(query.id, { text: "Não foi possível mudar de página." }).catch(() => {});
   }
 });
 

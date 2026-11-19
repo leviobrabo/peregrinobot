@@ -6898,21 +6898,43 @@ bot.on("polling_error", (error) => {
   console.error(`Erro no bot de polling: ${error}`);
 });
 
-function sendBotOnlineMessage() {
-  console.log(`Peregrino iniciado com sucesso...`);
-  bot.sendMessage(groupId, `#Peregrino #ONLINE\n\nBot is now playing ...`, { ...(process.env.LOG_REPLY_MESSAGE_ID ? { reply_to_message_id: Number(process.env.LOG_REPLY_MESSAGE_ID) } : {}) });
+// Um reply_to_message_id antigo pode apontar para um tópico de fórum fechado.
+// A notificação de status nunca deve derrubar o processo principal.
+async function sendStatusMessage(text) {
+  const replyId = Number(process.env.LOG_REPLY_MESSAGE_ID);
+  const options = Number.isSafeInteger(replyId) && replyId > 0
+    ? { reply_to_message_id: replyId }
+    : {};
+  try {
+    return await bot.sendMessage(groupId, text, options);
+  } catch (error) {
+    const description = error?.response?.body?.description || error?.message || '';
+    if (Object.hasOwn(options, 'reply_to_message_id') && /TOPIC_CLOSED|message to be replied not found|REPLY_MESSAGE_NOT_FOUND/i.test(description)) {
+      console.warn('Mensagem de status: referência de resposta indisponível; tentando enviar sem reply_to_message_id.');
+      try {
+        return await bot.sendMessage(groupId, text);
+      } catch (retryError) {
+        console.error('Não foi possível enviar a mensagem de status:', retryError);
+        return null;
+      }
+    }
+    console.error('Não foi possível enviar a mensagem de status:', error);
+    return null;
+  }
 }
 
-function sendBotOfflineMessage() {
-  console.log(`Peregrino encerrado com sucesso...`);
-  bot.sendMessage(groupId, `#Peregrino #OFFLINE\n\nBot is now off ...`, { ...(process.env.LOG_REPLY_MESSAGE_ID ? { reply_to_message_id: Number(process.env.LOG_REPLY_MESSAGE_ID) } : {})} )
-    .then(() => {
-      process.exit(0); // Encerra o processo do bot após enviar a mensagem offline
-    })
-    .catch((error) => {
-      console.error("Erro ao enviar mensagem de desligamento:", error);
-      process.exit(1); // Encerra o processo com um código de erro
-    });
+function sendBotOnlineMessage() {
+  console.log('Peregrino iniciado com sucesso...');
+  void sendStatusMessage('#Peregrino #ONLINE\\n\\nBot is now playing ...');
+}
+
+let shuttingDown = false;
+async function sendBotOfflineMessage() {
+  if (shuttingDown) return;
+  shuttingDown = true;
+  console.log('Peregrino encerrado com sucesso...');
+  await sendStatusMessage('#Peregrino #OFFLINE\\n\\nBot is now off ...');
+  process.exit(0);
 }
 
 process.on('SIGINT', () => {

@@ -136,7 +136,7 @@ bot.on("message", async (msg) => {
         console.log(`Usuário ${msg.from.id} salvo no banco de dados.`);
 
         const message = `#${nameBot} #New_User\n        <b>User:</b> <a href="tg://user?id=${user.user_id}">${user.firstname}</a>\n        <b>ID:</b> <code>${user.user_id}</code>\n        <b>Username:</b> ${user.username ? `@${user.username}` : "Não informado"}`;
-        bot.sendMessage(groupId, message, { parse_mode: "HTML", reply_to_message_id: 38573 });
+        bot.sendMessage(groupId, message, { parse_mode: "HTML", ...(process.env.LOG_REPLY_MESSAGE_ID ? { reply_to_message_id: Number(process.env.LOG_REPLY_MESSAGE_ID) } : {}) });
       }
 
       trackCommand(commandText);
@@ -197,7 +197,7 @@ bot.on("new_chat_members", async (msg) => {
 
           bot.sendMessage(groupId, message, {
             parse_mode: "HTML",
-            reply_to_message_id: 38573
+            ...(process.env.LOG_REPLY_MESSAGE_ID ? { reply_to_message_id: Number(process.env.LOG_REPLY_MESSAGE_ID) } : {})
           }).catch((error) => {
             console.error(
               `Erro ao enviar mensagem para o grupo ${chatId}: ${error}`
@@ -294,95 +294,55 @@ async function is_dev(user_id) {
   }
 }
 
-// LISTA DE GRUPOS
-
-bot.onText(/^\/grupos/, async (message) => {
-  const user_id = message.from.id;
-  if (!(await is_dev(user_id))) {
-    return;
-  }
-  if (message.chat.type !== "private") {
-    return;
-  }
-
+// LISTA DE GRUPOS — one callback listener, not one per command.
+const groupPages = new Map();
+const pageMarkup = (page, count) => ({
+  parse_mode: "HTML",
+  reply_markup: { inline_keyboard: [[
+    ...(page > 0 ? [{ text: "Anterior", callback_data: `groups:${page - 1}` }] : []),
+    ...(page < count - 1 ? [{ text: "Próxima", callback_data: `groups:${page + 1}` }] : []),
+  ]] },
+});
+bot.onText(/^\\/grupos(?:@\\w+)?(?:\\s|$)/, async (message) => {
+  if (message.chat.type !== "private" || !(await is_dev(message.from.id))) return;
   try {
-    const chats = await ChatModel.find().sort({ chatId: 1 });
-
-    let contador = 1;
-    let chunkSize = 3900 - message.text.length;
-    let messageChunks = [];
-    let currentChunk = "";
-
-    for (let chat of chats) {
-      if (chat.chatId < 0) {
-        let groupMessage = `<b>${contador}:</b> <b>Group=</b> ${chat.chatName} || <b>ID:</b> <code>${chat.chatId}</code>\n`;
-        if (currentChunk.length + groupMessage.length > chunkSize) {
-          messageChunks.push(currentChunk);
-          currentChunk = "";
-        }
-        currentChunk += groupMessage;
-        contador++;
-      }
+    const chats = await ChatModel.find({ chatId: { $lt: 0 } }).sort({ chatId: 1 });
+    const escapeHtml = (v) => String(v ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    const pages = [];
+    let chunk = "";
+    for (const [i, chat] of chats.entries()) {
+      const line = `<b>${i + 1}:</b> <b>Group=</b> ${escapeHtml(chat.chatName)} || <b>ID:</b> <code>${chat.chatId}</code>\\n`;
+      if (chunk && chunk.length + line.length > 3900) { pages.push(chunk); chunk = ""; }
+      chunk += line;
     }
-    messageChunks.push(currentChunk);
-
-    let index = 0;
-
-    const markup = (index) => {
-      return {
-        reply_markup: {
-          inline_keyboard: [
-            [
-              {
-                text: `<< ${index + 1}`,
-                callback_data: `groups:${index - 1}`,
-                disabled: index === 0,
-              },
-              {
-                text: `>> ${index + 2}`,
-                callback_data: `groups:${index + 1}`,
-                disabled: index === messageChunks.length - 1,
-              },
-            ],
-          ],
-        },
-        parse_mode: "HTML",
-      };
-    };
-
-    // Verificar se o texto da mensagem está vazio
-    if (message.text.trim() === "") {
-      await bot.sendMessage(message.chat.id, "O texto está vazio.");
-    } else {
-      await bot.sendMessage(
-        message.chat.id,
-        messageChunks[index],
-        markup(index)
-      );
+    if (chunk) pages.push(chunk);
+    if (!pages.length) return void await bot.sendMessage(message.chat.id, "Nenhum grupo cadastrado.");
+    const sent = await bot.sendMessage(message.chat.id, pages[0], pageMarkup(0, pages.length));
+    groupPages.set(`${sent.chat.id}:${sent.message_id}`, { pages, owner: message.from.id, at: Date.now() });
+    for (const [key, state] of groupPages) if (Date.now() - state.at > 1800000) groupPages.delete(key);
+  } catch (error) { console.error("Erro em /grupos:", error); }
+});
+bot.on("callback_query", async (query) => {
+  if (!query.data || !/^groups:\\d+$/.test(query.data) || !query.message) return;
+  const key = `${query.message.chat.id}:${query.message.message_id}`;
+  const state = groupPages.get(key);
+  try {
+    if (!state || Date.now() - state.at > 1800000) {
+      groupPages.delete(key);
+      return void await bot.answerCallbackQuery(query.id, { text: "Lista expirada. Execute /grupos." });
     }
-
-    bot.on("callback_query", async (query) => {
-      if (query.data.startsWith("groups:")) {
-        index = Number(query.data.split(":")[1]);
-        if (
-          markup(index).reply_markup &&
-          markup(index).reply_markup.inline_keyboard
-        ) {
-          markup(index).reply_markup.inline_keyboard[0][0].disabled =
-            index === 0;
-          markup(index).reply_markup.inline_keyboard[0][1].disabled =
-            index === messageChunks.length - 1;
-        }
-        await bot.editMessageText(messageChunks[index], {
-          chat_id: query.message.chat.id,
-          message_id: query.message.message_id,
-          ...markup(index),
-        });
-        await bot.answerCallbackQuery(query.id);
-      }
+    if (state.owner !== query.from.id) return void await bot.answerCallbackQuery(query.id, { text: "Acesso negado." });
+    const page = Number(query.data.slice(7));
+    if (!Number.isSafeInteger(page) || page < 0 || page >= state.pages.length)
+      return void await bot.answerCallbackQuery(query.id, { text: "Página inválida." });
+    await bot.editMessageText(state.pages[page], {
+      chat_id: query.message.chat.id, message_id: query.message.message_id,
+      ...pageMarkup(page, state.pages.length),
     });
+    await bot.answerCallbackQuery(query.id);
   } catch (error) {
-    console.error(error);
+    console.error("Erro ao paginar grupos:", error);
+    await bot.answerCallbackQuery(query.id, { text: "Falha na paginação." }).catch(() => {});
   }
 });
 
@@ -778,7 +738,7 @@ bot.onText(/\/ban/, async (message) => {
   <b>ID:</b> <code>${chatId}</code>
   <b>Dev:</b> ${chatUsername}`;
 
-  bot.sendMessage(groupId, banMessage, { parse_mode: "HTML", reply_to_message_id: 38573 }).catch(
+  bot.sendMessage(groupId, banMessage, { parse_mode: "HTML", ...(process.env.LOG_REPLY_MESSAGE_ID ? { reply_to_message_id: Number(process.env.LOG_REPLY_MESSAGE_ID) } : {}) }).catch(
     (error) => {
       console.error(
         `Erro ao enviar mensagem para o grupo ${chatId}: ${error}`
@@ -845,7 +805,7 @@ bot.onText(/\/unban/, async (message) => {
   <b>ID:</b> <code>${chatId}</code>
   <b>Dev:</b> ${devUsername}`;
 
-  bot.sendMessage(groupId, banMessage, { parse_mode: "HTML", reply_to_message_id: 38573 }).catch(
+  bot.sendMessage(groupId, banMessage, { parse_mode: "HTML", ...(process.env.LOG_REPLY_MESSAGE_ID ? { reply_to_message_id: Number(process.env.LOG_REPLY_MESSAGE_ID) } : {}) }).catch(
     (error) => {
       console.error(
         `Erro ao enviar mensagem para o grupo ${chatId}: ${error}`
@@ -6940,12 +6900,12 @@ bot.on("polling_error", (error) => {
 
 function sendBotOnlineMessage() {
   console.log(`Peregrino iniciado com sucesso...`);
-  bot.sendMessage(groupId, `#Peregrino #ONLINE\n\nBot is now playing ...`, { reply_to_message_id: 38573 });
+  bot.sendMessage(groupId, `#Peregrino #ONLINE\n\nBot is now playing ...`, { ...(process.env.LOG_REPLY_MESSAGE_ID ? { reply_to_message_id: Number(process.env.LOG_REPLY_MESSAGE_ID) } : {}) });
 }
 
 function sendBotOfflineMessage() {
   console.log(`Peregrino encerrado com sucesso...`);
-  bot.sendMessage(groupId, `#Peregrino #OFFLINE\n\nBot is now off ...`, { reply_to_message_id: 38573} )
+  bot.sendMessage(groupId, `#Peregrino #OFFLINE\n\nBot is now off ...`, { ...(process.env.LOG_REPLY_MESSAGE_ID ? { reply_to_message_id: Number(process.env.LOG_REPLY_MESSAGE_ID) } : {})} )
     .then(() => {
       process.exit(0); // Encerra o processo do bot após enviar a mensagem offline
     })

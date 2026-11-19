@@ -301,9 +301,9 @@ const pageMarkup = (page, count) => ({
   reply_markup: { inline_keyboard: [[
     ...(page > 0 ? [{ text: "Anterior", callback_data: `groups:${page - 1}` }] : []),
     ...(page < count - 1 ? [{ text: "Próxima", callback_data: `groups:${page + 1}` }] : []),
-  ]] },
+  ]].filter(buttons => buttons.length) },
 });
-bot.onText(/^\\/grupos(?:@\\w+)?(?:\\s|$)/, async (message) => {
+bot.onText(/^\/grupos(?:@\w+)?(?:\s|$)/, async (message) => {
   if (message.chat.type !== "private" || !(await is_dev(message.from.id))) return;
   try {
     const chats = await ChatModel.find({ chatId: { $lt: 0 } }).sort({ chatId: 1 });
@@ -311,7 +311,7 @@ bot.onText(/^\\/grupos(?:@\\w+)?(?:\\s|$)/, async (message) => {
     const pages = [];
     let chunk = "";
     for (const [i, chat] of chats.entries()) {
-      const line = `<b>${i + 1}:</b> <b>Group=</b> ${escapeHtml(chat.chatName)} || <b>ID:</b> <code>${chat.chatId}</code>\\n`;
+      const line = `<b>${i + 1}:</b> <b>Group=</b> ${escapeHtml(chat.chatName)} || <b>ID:</b> <code>${chat.chatId}</code>\n`;
       if (chunk && chunk.length + line.length > 3900) { pages.push(chunk); chunk = ""; }
       chunk += line;
     }
@@ -323,7 +323,7 @@ bot.onText(/^\\/grupos(?:@\\w+)?(?:\\s|$)/, async (message) => {
   } catch (error) { console.error("Erro em /grupos:", error); }
 });
 bot.on("callback_query", async (query) => {
-  if (!query.data || !/^groups:\\d+$/.test(query.data) || !query.message) return;
+  if (!query.data || !/^groups:\d+$/.test(query.data) || !query.message) return;
   const key = `${query.message.chat.id}:${query.message.message_id}`;
   const state = groupPages.get(key);
   try {

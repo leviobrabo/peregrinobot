@@ -19,7 +19,7 @@ jobs:
         with:
           node-version: '24'
       - name: Verify reproducible dependencies from committed lockfile
-        run: npm ci --no-fund
+        run: npm ci --no-fund --no-audit
       - name: Check TelegramBot export and legacy methods without polling
         run: |
           node <<'NODE'

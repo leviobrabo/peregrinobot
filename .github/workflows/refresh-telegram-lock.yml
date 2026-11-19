@@ -27,7 +27,9 @@ jobs:
       - name: Reconcile and repair lockfile
         run: |
           npm install --package-lock-only --no-audit --no-fund
-          npm audit fix --package-lock-only --no-fund
+          # npm audit fix exits 1 if unfixable moderate dev-only findings remain.
+          # The subsequent production audit still fails for any high/critical issue.
+          npm audit fix --package-lock-only --no-fund || true
       - name: Validate reproducible install and tests
         run: |
           npm ci --no-fund

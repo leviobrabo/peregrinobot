@@ -1,0 +1,43 @@
+name: Telegram SDK v1 compatibility
+
+on:
+  pull_request:
+    paths:
+      - 'src/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/telegram-sdk-v1.yml'
+  workflow_dispatch:
+
+jobs:
+  compatibility:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Verify reproducible dependencies from committed lockfile
+        run: npm ci --no-fund --no-audit
+      - name: Check TelegramBot export and legacy methods without polling
+        run: |
+          node <<'NODE'
+          const assert = require('node:assert/strict');
+          const pkg = require('node-telegram-bot-api');
+          assert.equal(typeof pkg.TelegramBot, 'function', 'v1 must export TelegramBot');
+          const bot = new pkg.TelegramBot('000000:TEST_TOKEN_NOT_REAL', { polling: false });
+          for (const method of ['onText','on','once','sendMessage','sendPhoto','editMessageText','deleteMessage','answerCallbackQuery','answerInlineQuery','setMyCommands','getMe','getChatAdministrators','getChatMember','leaveChat','forwardMessage','copyMessage','sendAudio']) {
+            assert.equal(typeof bot[method], 'function', method);
+          }
+          console.log('Legacy methods available');
+          NODE
+      - name: Unit tests
+        run: npm test -- --runInBand
+      - name: Production dependency security audit
+        run: npm audit --omit=dev --audit-level=high
+      - name: Check JavaScript syntax
+        run: |
+          node --check src/index.js
+          node --check src/bot.js
+          node --check src/handlers/main.js

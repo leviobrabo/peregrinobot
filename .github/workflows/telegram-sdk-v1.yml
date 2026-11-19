@@ -18,8 +18,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
-      - name: Install dependencies and generate lockfile for test
-        run: npm install --no-audit --no-fund
+      - name: Verify reproducible dependencies from committed lockfile
+        run: npm ci --no-fund
       - name: Check TelegramBot export and legacy methods without polling
         run: |
           node <<'NODE'

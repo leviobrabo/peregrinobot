@@ -6901,6 +6901,9 @@ bot.on("polling_error", (error) => {
 // Um reply_to_message_id antigo pode apontar para um tópico de fórum fechado.
 // A notificação de status nunca deve derrubar o processo principal.
 async function sendStatusMessage(text) {
+  // O tópico configurado está fechado. Notificações são opcionais e ficam desligadas por padrão.
+  // Reative somente após ajustar o destino: TELEGRAM_STATUS_NOTIFICATIONS=true
+  if (process.env.TELEGRAM_STATUS_NOTIFICATIONS !== 'true') return null;
   const replyId = Number(process.env.LOG_REPLY_MESSAGE_ID);
   const options = Number.isSafeInteger(replyId) && replyId > 0
     ? { reply_to_message_id: replyId }
